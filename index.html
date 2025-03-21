@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>جدول المهام - الجدول الأول والثاني</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div class="text-center mt-3">
+      <h2 class="fs-5 editable" id="title1">السرية الأولى</h2>
+      <button class="btn btn-warning btn-sm edit-btn" onclick="editText('title1')">تعديل</button>
+      <h3 class="fs-6 editable" id="title2">فصيل (1)</h3>
+      <button class="btn btn-warning btn-sm edit-btn" onclick="editText('title2')">تعديل</button>
+      <h3 class="fs-6 editable" id="title3">مجموعة (7)</h3>
+      <button class="btn btn-warning btn-sm edit-btn" onclick="editText('title3')">تعديل</button>
+      <h4 class="header fs-6 editable" id="title4">بيان بالمهام المكلفة بها قوة المهام والواجبات الخاصة</h4>
+      <button class="btn btn-warning btn-sm edit-btn" onclick="editText('title4')">تعديل</button>
+    </div>
+
+    <div class="table-responsive mt-4">
+      <div class="table-section">
+        <h3 class="fs-6 mb-3">الجدول الأول</h3>
+        <table class="table table-bordered table-striped text-center align-middle" id="mainTable1">
+        <thead class="table-dark">
+          <tr>
+            <th>اليوم والتاريخ</th>
+            <th>الاستعداد والبداية</th>
+            <th>نوع المهمة</th>
+            <th>الموقع</th>
+            <th>المطلوب</th>
+            <th>تعديل</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="4">الثلاثاء 1446/8/5</td>
+            <td>المباشرة بالموقع<br>الساعة 8:00 ص</td>
+            <td>الاتصال حسب التوجيه</td>
+            <td>-</td>
+            <td>-</td>
+            <td>
+              <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
+              <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
+            </td>
+          </tr>
+          <tr>
+            <td>من الساعة 3:30 م إلى الساعة 12:00 ص</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>
+              <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
+              <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
+            </td>
+          </tr>
+          <tr>
+            <td>المباشرة بالموقع الساعة 1:30 م<br>بداية المباراة الساعة 3:55 م</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>
+              <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
+              <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
+            </td>
+          </tr>
+          <tr>
+            <td>المباشرة بالموقع الساعة 2:00 م<br>بداية المباراة الساعة 3:00 م</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>
+              <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
+              <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="table-buttons mt-3">
+        <button class="btn btn-success btn-sm" onclick="addNewRow('mainTable1')">إضافة صف للجدول الأول</button>
+        <button class="btn btn-primary btn-sm print-btn" onclick="printTable('mainTable1')">طباعة الجدول الأول</button>
+      </div>
+    </div>
+
+    <div class="table-responsive mt-5">
+      <h3 class="fs-6 mb-3">الجدول الثاني</h3>
+      <table class="table table-bordered table-striped text-center align-middle" id="mainTable2">
+        <thead class="table-dark">
+          <tr>
+            <th>اليوم والتاريخ</th>
+            <th>الاستعداد والبداية</th>
+            <th>نوع المهمة</th>
+            <th>الموقع</th>
+            <th>المطلوب</th>
+            <th>تعديل</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>-</td>
+            <td>من الساعة 6:00 ص إلى 2:00 ص</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>
+              <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
+              <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
+            </td>
+          </tr>
+          <tr>
+            <td>-</td>
+            <td>24 ساعة باستمرار</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>
+              <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
+              <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
+            </td>
+          </tr>
+          <tr>
+            <td>-</td>
+            <td>24 ساعة باستمرار</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>
+              <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
+              <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
+            </td>
+          </tr>
+          <tr>
+            <td>-</td>
+            <td>24 ساعة باستمرار</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>
+              <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
+              <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-buttons mt-3">
+      <button class="btn btn-success btn-sm" onclick="addNewRow('mainTable2')">إضافة صف للجدول الثاني</button>
+      <button class="btn btn-primary btn-sm print-btn" onclick="printTable('mainTable2')">طباعة الجدول الثاني</button>
+    </div>
+
+    <!-- المقدمة -->
+    <div class="introduction mt-5">
+      <p class="fs-6 text-end">
+        السلام عليكم ورحمة الله وبركاته تجولون أعلاه بيان بالمهام الأسبوعية
+        المراد تغطيتها أمنياً من قبلكم، بالإضافة للمهام الطارئة لذا عليكم
+        متابعة تغطيتها بالوقت المحدد دون أي ملاحظات مع التنبيه على العموم
+        بارتداء السلاح والتجهيزات الميدانية اللازمة لكل مهمة كالخدمة والتنسيق
+        معنا بما يستجد أول بأول،،، والسلام
+      </p>
+      <p class="fs-6 text-end">ص/ ضباط خفر رقباء السرايا ص/ العمليات</p>
+    </div>
+
+    <!-- الملاحظات -->
+    <div class="notes mt-5">
+      <h5 class="fs-6 editable" id="notesTitle">
+        ملاحظات هامة وتعليمات يجب الالتزام بها:
+      </h5>
+      <ul class="fs-6">
+        <li>
+          التواجد في المواقع المحددة لكل مهمة قبل الموعد المحدد بـ 30 دقيقة
+          على الأقل.
+        </li>
+        <li>التأكد من جاهزية الأفراد والمعدات قبل بدء المهمة.</li>
+        <li>الالتزام بالزي العسكري الموحد والمظهر العام.</li>
+        <li>التواصل المستمر مع قائد المجموعة لتلقي التوجيهات.</li>
+        <li>
+          الإبلاغ الفوري عن أي مستجدات أو مشكلات تواجه الأفراد أثناء تنفيذ
+          المهمة.
+        </li>
+        <li>
+          التأكد من وجود وسائل الاتصال اللازمة (اللاسلكي - الهاتف) مع كل فرد.
+        </li>
+        <li>الالتزام بتعليمات السلامة أثناء التنفيذ.</li>
+        <li>
+          التأكد من تسليم التقارير اليومية لقائد المجموعة بعد انتهاء المهمة.
+        </li>
+        <li>التأكد من وجود خطة بديلة في حال حدوث أي طارئ.</li>
+        <li>التأكد من توفر وسائل النقل اللازمة للأفراد.</li>
+      </ul>
+      <p class="fs-6 text-center editable" id="signatureTitle">
+        قائد قوة المهام والواجبات الخاصة
+      </p>
+      <button
+        class="btn btn-warning btn-sm edit-btn"
+        onclick="editText('signatureTitle')"
+      >
+        تعديل
+      </button>
+      <p class="fs-6 text-center editable" id="signatureName">
+        عقيد / فيصل بن خالد النفيسه
+      </p>
+      <button
+        class="btn btn-warning btn-sm edit-btn"
+        onclick="editText('signatureName')"
+      >
+        تعديل
+      </button>
+    </div>
+
+    <div class="text-center mt-4 navigation-buttons">
+      <a href="second.html" class="btn btn-secondary btn-sm">الجدول الثالث</a>
+      <a href="pending_tasks.html" class="btn btn-warning btn-sm">المهام المؤجلة</a>
+      <a href="statistics.html" class="btn btn-secondary btn-sm">الإحصائية</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+  <script>
+    window.onload = function() {
+      loadText("title1");
+      loadText("title2"); 
+      loadText("title3");
+      loadText("title4");
+    };
+  </script>
+</body>
+</html>
