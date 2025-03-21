@@ -99,6 +99,10 @@
         .container {
           padding: 10px;
         }
+        .action-buttons {
+          flex-direction: column;
+          gap: 5px; /* تقليل المسافة بين الأزرار في الشاشات الصغيرة */
+        }
       }
 
       @media print {
@@ -175,19 +179,21 @@
                 <td>الاتصال حسب التوجيه</td>
                 <td>-</td>
                 <td>-</td>
-                <td class="action-buttons">
-                  <button
-                    class="btn btn-warning btn-sm edit-btn"
-                    onclick="editRow(this, 'mainTable1')"
-                  >
-                    تعديل
-                  </button>
-                  <button
-                    class="btn btn-success btn-sm complete-btn"
-                    onclick="completeTask(this, 'mainTable1')"
-                  >
-                    اكتمال
-                  </button>
+                <td class="button-cell">
+                  <div class="action-buttons">
+                    <button
+                      class="btn btn-warning btn-sm edit-btn"
+                      onclick="editRow(this, 'mainTable1')"
+                    >
+                      تعديل
+                    </button>
+                    <button
+                      class="btn btn-success btn-sm complete-btn"
+                      onclick="completeTask(this, 'mainTable1')"
+                    >
+                      اكتمال
+                    </button>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -196,19 +202,21 @@
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
-                <td class="action-buttons">
-                  <button
-                    class="btn btn-warning btn-sm edit-btn"
-                    onclick="editRow(this, 'mainTable1')"
-                  >
-                    تعديل
-                  </button>
-                  <button
-                    class="btn btn-success btn-sm complete-btn"
-                    onclick="completeTask(this, 'mainTable1')"
-                  >
-                    اكتمال
-                  </button>
+                <td class="button-cell">
+                  <div class="action-buttons">
+                    <button
+                      class="btn btn-warning btn-sm edit-btn"
+                      onclick="editRow(this, 'mainTable1')"
+                    >
+                      تعديل
+                    </button>
+                    <button
+                      class="btn btn-success btn-sm complete-btn"
+                      onclick="completeTask(this, 'mainTable1')"
+                    >
+                      اكتمال
+                    </button>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -220,19 +228,21 @@
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
-                <td class="action-buttons">
-                  <button
-                    class="btn btn-warning btn-sm edit-btn"
-                    onclick="editRow(this, 'mainTable1')"
-                  >
-                    تعديل
-                  </button>
-                  <button
-                    class="btn btn-success btn-sm complete-btn"
-                    onclick="completeTask(this, 'mainTable1')"
-                  >
-                    اكتمال
-                  </button>
+                <td class="button-cell">
+                  <div class="action-buttons">
+                    <button
+                      class="btn btn-warning btn-sm edit-btn"
+                      onclick="editRow(this, 'mainTable1')"
+                    >
+                      تعديل
+                    </button>
+                    <button
+                      class="btn btn-success btn-sm complete-btn"
+                      onclick="completeTask(this, 'mainTable1')"
+                    >
+                      اكتمال
+                    </button>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -244,19 +254,21 @@
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
-                <td class="action-buttons">
-                  <button
-                    class="btn btn-warning btn-sm edit-btn"
-                    onclick="editRow(this, 'mainTable1')"
-                  >
-                    تعديل
-                  </button>
-                  <button
-                    class="btn btn-success btn-sm complete-btn"
-                    onclick="completeTask(this, 'mainTable1')"
-                  >
-                    اكتمال
-                  </button>
+                <td class="button-cell">
+                  <div class="action-buttons">
+                    <button
+                      class="btn btn-warning btn-sm edit-btn"
+                      onclick="editRow(this, 'mainTable1')"
+                    >
+                      تعديل
+                    </button>
+                    <button
+                      class="btn btn-success btn-sm complete-btn"
+                      onclick="completeTask(this, 'mainTable1')"
+                    >
+                      اكتمال
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -303,19 +315,21 @@
               <td>-</td>
               <td>-</td>
               <td>-</td>
-              <td class="action-buttons">
-                <button
-                  class="btn btn-warning btn-sm edit-btn"
-                  onclick="editRow(this, 'mainTable2')"
-                >
-                  تعديل
-                </button>
-                <button
-                  class="btn btn-success btn-sm complete-btn"
-                  onclick="completeTask(this, 'mainTable2')"
-                >
-                  اكتمال
-                </button>
+              <td class="button-cell">
+                <div class="action-buttons">
+                  <button
+                    class="btn btn-warning btn-sm edit-btn"
+                    onclick="editRow(this, 'mainTable2')"
+                  >
+                    تعديل
+                  </button>
+                  <button
+                    class="btn btn-success btn-sm complete-btn"
+                    onclick="completeTask(this, 'mainTable2')"
+                  >
+                    اكتمال
+                  </button>
+                </div>
               </td>
             </tr>
             <tr>
@@ -324,19 +338,21 @@
               <td>-</td>
               <td>-</td>
               <td>-</td>
-              <td class="action-buttons">
-                <button
-                  class="btn btn-warning btn-sm edit-btn"
-                  onclick="editRow(this, 'mainTable2')"
-                >
-                  تعديل
-                </button>
-                <button
-                  class="btn btn-success btn-sm complete-btn"
-                  onclick="completeTask(this, 'mainTable2')"
-                >
-                  اكتمال
-                </button>
+              <td class="button-cell">
+                <div class="action-buttons">
+                  <button
+                    class="btn btn-warning btn-sm edit-btn"
+                    onclick="editRow(this, 'mainTable2')"
+                  >
+                    تعديل
+                  </button>
+                  <button
+                    class="btn btn-success btn-sm complete-btn"
+                    onclick="completeTask(this, 'mainTable2')"
+                  >
+                    اكتمال
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -445,47 +461,52 @@
           <td contenteditable="true">-</td>
           <td contenteditable="true">-</td>
           <td contenteditable="true">-</td>
-          <td class="action-buttons">
-            <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this, '${tableId}')">تعديل</button>
-            <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">اكتمال</button>
+          <td class="button-cell">
+            <div class="action-buttons">
+              <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this, '${tableId}')">تعديل</button>
+              <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">اكتمال</button>
+            </div>
           </td>
         `;
         saveTableData(tableId);
       }
 
       function editRow(button, tableId) {
-        const row = button.parentElement.parentElement;
+        const row = button.closest("tr");
         row
-          .querySelectorAll("td:not(.action-buttons)")
+          .querySelectorAll("td:not(.button-cell)")
           .forEach((td) => (td.contentEditable = "true"));
-        button.innerText = "حفظ";
-        button.className = "btn btn-success btn-sm edit-btn";
-        button.onclick = function () {
+        const editButton = row.querySelector(".edit-btn");
+        editButton.innerText = "حفظ";
+        editButton.className = "btn btn-success btn-sm edit-btn";
+        editButton.onclick = function () {
           saveRow(this, tableId);
         };
       }
 
       function saveRow(button, tableId) {
-        const row = button.parentElement.parentElement;
+        const row = button.closest("tr");
         row
-          .querySelectorAll("td:not(.action-buttons)")
+          .querySelectorAll("td:not(.button-cell)")
           .forEach((td) => (td.contentEditable = "false"));
-        button.innerText = "تعديل";
-        button.className = "btn btn-warning btn-sm edit-btn";
-        button.onclick = function () {
+        const editButton = row.querySelector(".edit-btn");
+        editButton.innerText = "تعديل";
+        editButton.className = "btn btn-warning btn-sm edit-btn";
+        editButton.onclick = function () {
           editRow(this, tableId);
         };
         saveTableData(tableId);
       }
 
       function completeTask(button, tableId) {
-        const row = button.parentElement.parentElement;
+        const row = button.closest("tr");
         row.classList.toggle("completed-task");
-        button.innerText = row.classList.contains("completed-task")
+        const completeButton = row.querySelector(".complete-btn");
+        completeButton.innerText = row.classList.contains("completed-task")
           ? "تراجع"
           : "اكتمال";
-        button.classList.toggle("btn-secondary");
-        button.classList.toggle("btn-success");
+        completeButton.classList.toggle("btn-secondary");
+        completeButton.classList.toggle("btn-success");
         saveTableData(tableId);
       }
 
@@ -524,9 +545,11 @@
               <td contenteditable="false">${rowData[2]}</td>
               <td contenteditable="false">${rowData[3]}</td>
               <td contenteditable="false">${rowData[4]}</td>
-              <td class="action-buttons">
-                <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this, '${tableId}')">تعديل</button>
-                <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">اكتمال</button>
+              <td class="button-cell">
+                <div class="action-buttons">
+                  <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this, '${tableId}')">تعديل</button>
+                  <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">اكتمال</button>
+                </div>
               </td>
             `;
             if (rowData[5]) row.classList.add("completed-task");
