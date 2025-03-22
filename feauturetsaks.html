@@ -67,8 +67,7 @@
         flex-wrap: wrap;
       }
       .edit-btn,
-      .complete-btn,
-      .delete-btn {
+      .complete-btn {
         margin: 2px;
         padding: 4px 8px;
         font-size: 12px;
@@ -77,14 +76,6 @@
       .completed-task {
         background-color: #d4edda !important;
         text-decoration: line-through;
-      }
-      .notes ul,
-      .notes p {
-        font-size: 12px;
-      }
-      .signature-section p {
-        text-align: center;
-        margin: 5px 0;
       }
       .time-input,
       .hijri-select {
@@ -109,8 +100,7 @@
           overflow-x: auto;
         }
         .edit-btn,
-        .complete-btn,
-        .delete-btn {
+        .complete-btn {
           padding: 2px 4px;
           font-size: 9px;
           min-width: 50px;
@@ -140,7 +130,6 @@
       @media print {
         .edit-btn,
         .complete-btn,
-        .delete-btn,
         .print-btn,
         .navigation-buttons {
           display: none;
@@ -277,69 +266,14 @@
         </div>
       </div>
 
-      <!-- المقدمة -->
-      <div class="introduction mt-5">
-        <p class="fs-6 text-end">
-          السلام عليكم ورحمة الله وبركاته تجولون أعلاه بيان بالمهام الأسبوعية
-          المراد تغطيتها أمنياً من قبلكم، بالإضافة للمهام الطارئة لذا عليكم
-          متابعة تغطيتها بالوقت المحدد دون أي ملاحظات مع التنبيه على العموم
-          بارتداء السلاح والتجهيزات الميدانية اللازمة لكل مهمة كالخدمة والتنسيق
-          معنا بما يستجد أول بأول،،، والسلام
-        </p>
-        <p class="fs-6 text-end">ص/ ضباط خفر رقباء السرايا ص/ العمليات</p>
-      </div>
-
-      <!-- الملاحظات -->
-      <div class="notes mt-5">
-        <h5 class="fs-6 editable" id="notesTitle">
-          ملاحظات هامة وتعليمات يجب الالتزام بها:
-        </h5>
-        <button
-          class="btn btn-warning btn-sm edit-btn"
-          onclick="editText('notesTitle')"
-        >
-          تعديل
-        </button>
-        <ul class="fs-6">
-          <li>
-            التواجد في المواقع المحددة لكل مهمة قبل الموعد المحدد بـ 30 دقيقة
-            على الأقل.
-          </li>
-          <li>التأكد من جاهزية الأفراد والمعدات قبل بدء المهمة.</li>
-          <li>الالتزام بالزي العسكري الموحد والمظهر العام.</li>
-          <li>التواصل المستمر مع قائد المجموعة لتلقي التوجيهات.</li>
-          <li>
-            الإبلاغ الفوري عن أي مستجدات أو مشكلات تواجه الأفراد أثناء تنفيذ
-            المهمة.
-          </li>
-        </ul>
-        <div class="signature-section">
-          <p class="fs-6 editable" id="signatureTitle">عميد</p>
-          <button
-            class="btn btn-warning btn-sm edit-btn"
-            onclick="editText('signatureTitle')"
-          >
-            تعديل
-          </button>
-          <p class="fs-6 editable" id="signatureName">
-            عقيد / <br />فيصل بن خالد النفيسه
-          </p>
-          <button
-            class="btn btn-warning btn-sm edit-btn"
-            onclick="editText('signatureName')"
-          >
-            تعديل
-          </button>
-        </div>
-      </div>
-
       <!-- أزرار التنقل -->
       <div class="text-center mt-4 navigation-buttons">
+        <a href="index.html" class="btn btn-primary btn-sm">الصفحة الرئيسية</a>
         <a href="second.html" class="btn btn-secondary btn-sm">الجدول الثالث</a>
         <a href="pending_tasks.html" class="btn btn-warning btn-sm"
           >المهام المؤجلة</a
         >
-        <a href="feauturetsaks.html" class="btn btn-warning btn-sm"
+        <a href="futuretasks.html" class="btn btn-warning btn-sm"
           >المهام المستقبلية</a
         >
         <a href="statistics.html" class="btn btn-secondary btn-sm">الإحصائية</a>
@@ -430,7 +364,6 @@
         updateAllTables();
         saveTableData("mainTable1");
         saveTableData("mainTable2");
-        updatePendingTasks();
       }
 
       // تغيير التاريخ الهجري
@@ -455,7 +388,6 @@
         updateAllTables();
         saveTableData("mainTable1");
         saveTableData("mainTable2");
-        updatePendingTasks();
       }
 
       // ترتيب المهام بناءً على وقت المباشرة
@@ -531,13 +463,11 @@
                     <div class="action-buttons">
                         <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}')">تعديل</button>
                         <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">اكتمال</button>
-                        <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
                     </div>
                 </td>
             `;
         saveTableData(tableId);
         sortTableByStartTime(tableId);
-        updatePendingTasks();
       }
 
       function editTable(tableId) {
@@ -578,67 +508,12 @@
         }
         saveTableData(tableId);
         sortTableByStartTime(tableId);
-        updatePendingTasks();
       }
 
       function completeTask(button, tableId) {
         const row = button.closest("tr");
-        if (row.classList.contains("completed-task")) {
-          // إذا كان الصف مكتملًا، قم بإلغاء الاكتمال
-          row.classList.remove("completed-task");
-          button.innerText = "اكتمال";
-        } else {
-          // إذا لم يكن مكتملًا، قم بتعليمه كمكتمل
-          row.classList.add("completed-task");
-          button.innerText = "إلغاء الاكتمال";
-        }
-        // تحديث حالة المهمة في localStorage
-        const table = document
-          .getElementById(tableId)
-          .getElementsByTagName("tbody")[0];
-        const rows = table.getElementsByTagName("tr");
-        const data = [];
-        for (let r of rows) {
-          const cells = r.getElementsByTagName("td");
-          const day = cells[0].querySelector("select[name='hijri-day']").value;
-          const month = cells[0].querySelector(
-            "select[name='hijri-month']"
-          ).value;
-          const year = cells[0].querySelector(
-            "select[name='hijri-year']"
-          ).value;
-          const startTime = cells[1].querySelector(
-            "input[name='start-time']"
-          ).value;
-          const taskStartTime = cells[1].querySelector(
-            "input[name='task-start-time']"
-          ).value;
-          const taskEndTime = cells[1].querySelector(
-            "input[name='task-end-time']"
-          ).value;
-          const siteStartTime = cells[2].querySelector(
-            "input[name='site-start-time']"
-          ).value;
-          const isCompleted = r.classList.contains("completed-task");
-          data.push([
-            `${day} ${hijriMonths[month - 1]} ${year}`,
-            `بداية الانطلاق: ${startTime} | من الساعة ${taskStartTime} إلى ${taskEndTime}`,
-            `المباشرة بالموقع: ${siteStartTime}`,
-            cells[3].innerText,
-            cells[4].innerText,
-            cells[5].innerText,
-            isCompleted,
-          ]);
-        }
-        localStorage.setItem(tableId + "_tasks", JSON.stringify(data));
-        updatePendingTasks();
-      }
-
-      function deleteTask(button, tableId) {
-        const row = button.closest("tr");
         row.remove();
         saveTableData(tableId);
-        updatePendingTasks();
       }
 
       function saveTableData(tableId) {
@@ -668,7 +543,6 @@
           const siteStartTime = cells[2].querySelector(
             "input[name='site-start-time']"
           ).value;
-          const isCompleted = row.classList.contains("completed-task");
           data.push([
             `${day} ${hijriMonths[month - 1]} ${year}`,
             `بداية الانطلاق: ${startTime} | من الساعة ${taskStartTime} إلى ${taskEndTime}`,
@@ -676,7 +550,7 @@
             cells[3].innerText,
             cells[4].innerText,
             cells[5].innerText,
-            isCompleted,
+            false,
           ]);
         }
         localStorage.setItem(tableId + "_tasks", JSON.stringify(data));
@@ -726,12 +600,7 @@
               rowData[2] ? rowData[2].replace("المباشرة بالموقع: ", "") : ""
             );
 
-            const isCompleted = rowData[6]; // الحالة (مكتملة أو لا)
-
             const row = table.insertRow();
-            if (isCompleted) {
-              row.classList.add("completed-task");
-            }
             row.innerHTML = `
                         <td class="date-cell">
                             <select class="hijri-select" name="hijri-day">
@@ -782,10 +651,7 @@
                         <td class="button-cell">
                             <div class="action-buttons">
                                 <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}')">تعديل</button>
-                                <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">${
-              isCompleted ? "إلغاء الاكتمال" : "اكتمال"
-            }</button>
-                                <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
+                                <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">اكتمال</button>
                             </div>
                         </td>
                     `;
@@ -890,7 +756,6 @@
                             <div class="action-buttons">
                                 <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}')">تعديل</button>
                                 <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">اكتمال</button>
-                                <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
                             </div>
                         </td>
                     `;
@@ -944,23 +809,6 @@
         });
       }
 
-      function updatePendingTasks() {
-        const pendingTasks = [];
-        ["mainTable1", "mainTable2"].forEach((tableId) => {
-          const tableData = JSON.parse(
-            localStorage.getItem(tableId + "_tasks") || "[]"
-          );
-          // إضافة المهام غير المكتملة فقط
-          tableData.forEach((task) => {
-            if (!task[6]) {
-              // task[6] هو حالة الاكتمال
-              pendingTasks.push(task);
-            }
-          });
-        });
-        localStorage.setItem("pending_tasks", JSON.stringify(pendingTasks));
-      }
-
       function printTable(tableId) {
         window.print();
       }
@@ -994,7 +842,6 @@
         populateDateSelects();
         loadTableData("mainTable1");
         loadTableData("mainTable2");
-        updatePendingTasks();
 
         // ربط الأحداث لتحديث التاريخ عند التغيير في العنوان
         const daySelect = document.querySelector(
