@@ -59,52 +59,44 @@
       .table td {
         text-align: center;
         vertical-align: middle;
-        padding: 6px; /* غيّرت من 8px إلى 6px */
+        padding: 6px;
       }
       .table td {
-        font-size: 10px; /* غيّرت من 12px إلى 10px */
+        font-size: 10px;
         font-weight: bold;
       }
       /* تعديل عرض الأعمدة */
       .table th:nth-child(1),
       .table td:nth-child(1) {
-        /* التسلسل */
         width: 5%;
       }
       .table th:nth-child(2),
       .table td:nth-child(2) {
-        /* اليوم والتاريخ */
         width: 15%;
       }
       .table th:nth-child(3),
       .table td:nth-child(3) {
-        /* المباشرة بالموقع */
         width: 10%;
       }
       .table th:nth-child(4),
       .table td:nth-child(4) {
-        /* نوع المهمة */
         width: 25%;
       }
       .table th:nth-child(5),
       .table td:nth-child(5) {
-        /* الموقع */
         width: 15%;
       }
       .table th:nth-child(6),
       .table td:nth-child(6) {
-        /* المطلوب */
         width: 25%;
       }
       .table th:nth-child(7),
       .table td:nth-child(7) {
-        /* تعديل */
         width: 5%;
       }
-      /* تقليص عرض عناصر select في عمود اليوم والتاريخ */
       .hijri-select {
-        width: 45px !important; /* غيّرت من 50px إلى 45px */
-        font-size: 9px; /* غيّرت من 10px إلى 9px */
+        width: 45px !important;
+        font-size: 9px;
         padding: 2px;
       }
       .action-buttons {
@@ -180,7 +172,7 @@
         font-size: 11px;
       }
       .signature-section {
-        text-align: left; /* تغيير المحاذاة إلى الجهة اليسرى (الشمال) */
+        text-align: left;
         width: 100%;
       }
       .signature-section p {
@@ -200,11 +192,24 @@
         gap: 5px;
         justify-content: center;
       }
-      /* إخفاء النص المخصص للطباعة في العرض العادي */
       .print-date {
         display: none;
       }
       @media print {
+        @page {
+          size: A4;
+          margin: 10mm; /* تقليل الهوامش لتوفير مساحة */
+        }
+        body {
+          margin: 0;
+          padding: 0;
+          font-size: 8pt; /* تقليل حجم الخط العام */
+        }
+        .container {
+          padding: 5mm; /* تقليل الـpadding */
+          margin: 0;
+          max-width: 100%;
+        }
         .date-controls,
         .table-buttons,
         .edit-column,
@@ -219,13 +224,56 @@
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
         }
-        /* إخفاء القوائم المنسدلة في أعمدة التاريخ */
         .hijri-select {
           display: none !important;
         }
-        /* إظهار النص المخصص للطباعة */
         .print-date {
           display: inline !important;
+          font-size: 8pt; /* تقليل حجم النص المخصص للطباعة */
+        }
+        .table {
+          margin-bottom: 5mm; /* تقليل المسافة بين الجداول */
+          font-size: 7pt; /* تقليل حجم الخط في الجداول */
+        }
+        .table th,
+        .table td {
+          padding: 2mm; /* تقليل الـpadding */
+          height: 6mm; /* تحديد ارتفاع ثابت للصفوف */
+          line-height: 1; /* تقليل المسافة بين السطور */
+        }
+        .table-section {
+          margin-bottom: 2mm; /* تقليل المسافة بين الجداول */
+        }
+        h4.header {
+          font-size: 9pt; /* تقليل حجم العنوان */
+          margin-bottom: 2mm;
+        }
+        .small-text {
+          font-size: 7pt; /* تقليل حجم النصوص الصغيرة */
+          margin-bottom: 1mm;
+        }
+        .introduction {
+          font-size: 7pt; /* تقليل حجم المقدمة */
+          margin-top: 2mm;
+          margin-bottom: 2mm;
+        }
+        .notes {
+          margin-top: 2mm;
+        }
+        .notes h5 {
+          font-size: 7pt; /* تقليل حجم عنوان الملاحظات */
+          margin-bottom: 1mm;
+        }
+        .notes ul {
+          font-size: 6pt; /* تقليل حجم الملاحظات */
+          margin: 0;
+          padding-right: 5mm;
+          line-height: 1.2; /* تقليل المسافة بين السطور */
+        }
+        .signature-section p {
+          font-size: 8pt; /* تقليل حجم التوقيع */
+          margin-top: 2mm;
+          line-height: 1.2;
         }
         /* التأكد من أن الألوان الخلفية للمهام المهمة تظهر */
         .important-task-dark-red {
@@ -258,7 +306,6 @@
         .important-task-deep-purple {
           background-color: #ba68c8 !important;
         }
-        /* التأكد من أن التوقيع يظهر في الجهة اليسرى عند الطباعة */
         .signature-section {
           text-align: left;
           width: 100%;
@@ -271,7 +318,7 @@
       }
       @media (max-width: 430px) {
         .table {
-          font-size: 7px; /* غيّرت من 8px إلى 7px */
+          font-size: 7px;
           min-width: 600px;
         }
         .table-responsive {
@@ -296,8 +343,8 @@
         }
         .hijri-select,
         .color-select {
-          width: 35px !important; /* غيّرت من 40px إلى 35px */
-          font-size: 7px; /* غيّرت من 8px إلى 7px */
+          width: 35px !important;
+          font-size: 7px;
         }
         .table th,
         .table td {
@@ -305,7 +352,7 @@
         }
         .table td {
           white-space: normal;
-          line-height: 1; /* غيّرت من 1.2 إلى 1 */
+          line-height: 1;
         }
       }
     </style>
@@ -510,7 +557,6 @@
           <li>عدم تشغيل السيفتي أثناء التوجه للموقع والمغادرة منه.</li>
         </ul>
 
-        <!-- قسم التوقيع المعاد مع المحاذاة إلى الجهة اليسرى (الشمال) -->
         <div class="signature-section">
           <p
             id="signatureName"
@@ -528,13 +574,6 @@
             <span style="display: block; margin-left: 175px">عقيد /</span>
             <span style="display: block">قائد قوة المهام والواجبات الخاصة</span>
           </p>
-
-          <!-- <button
-            class="btn btn-warning btn-sm edit-btn"
-            onclick="editText('signatureName')"
-          >
-            تعديل
-          </button> -->
         </div>
       </div>
 
