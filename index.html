@@ -59,10 +59,10 @@
       .table td {
         text-align: center;
         vertical-align: middle;
-        padding: 8px;
+        padding: 6px; /* غيّرت من 8px إلى 6px */
       }
       .table td {
-        font-size: 12px; /* غيّرت من 14px إلى 12px */
+        font-size: 10px; /* غيّرت من 12px إلى 10px */
         font-weight: bold;
       }
       /* تعديل عرض الأعمدة */
@@ -103,8 +103,8 @@
       }
       /* تقليص عرض عناصر select في عمود اليوم والتاريخ */
       .hijri-select {
-        width: 50px !important;
-        font-size: 10px;
+        width: 45px !important; /* غيّرت من 50px إلى 45px */
+        font-size: 9px; /* غيّرت من 10px إلى 9px */
         padding: 2px;
       }
       .action-buttons {
@@ -271,7 +271,7 @@
       }
       @media (max-width: 430px) {
         .table {
-          font-size: 8px; /* غيّرت من 9px إلى 8px */
+          font-size: 7px; /* غيّرت من 8px إلى 7px */
           min-width: 600px;
         }
         .table-responsive {
@@ -296,8 +296,8 @@
         }
         .hijri-select,
         .color-select {
-          width: 40px !important;
-          font-size: 8px;
+          width: 35px !important; /* غيّرت من 40px إلى 35px */
+          font-size: 7px; /* غيّرت من 8px إلى 7px */
         }
         .table th,
         .table td {
@@ -305,7 +305,7 @@
         }
         .table td {
           white-space: normal;
-          line-height: 1.2;
+          line-height: 1; /* غيّرت من 1.2 إلى 1 */
         }
       }
     </style>
@@ -516,22 +516,19 @@
             id="signatureName"
             class="editable"
             style="
-              font-size: 14px;
+              font-size: 16px;
               font-family: 'Tajawal', sans-serif;
-              line-height: 1.2;
-              display: block;
-              word-spacing: -1px;
-              letter-spacing: -0.5px;
+              line-height: 1.8;
+              text-align: left;
             "
           >
-            <span>
-              <div style="margin-left: 280px">عقيد /</div>
-              <div style="padding-right: 50px">
-                <span>قائد قوة المهام والواجبات الخاصة</span>
-                <span style="margin-right: 2px">فيصل بن خالد النفيسة</span>
-              </div>
-            </span>
+            <span style="display: block; margin-left: 67px"
+              >فيصل بن خالد النفيسة</span
+            >
+            <span style="display: block; margin-left: 175px">عقيد /</span>
+            <span style="display: block">قائد قوة المهام والواجبات الخاصة</span>
           </p>
+
           <!-- <button
             class="btn btn-warning btn-sm edit-btn"
             onclick="editText('signatureName')"
