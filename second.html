@@ -93,14 +93,12 @@
         display: inline-block;
       }
 
-      /* تنسيق الجدول على الشاشات الكبيرة */
       @media (min-width: 431px) {
         .table-responsive {
           overflow-x: hidden;
         }
       }
 
-      /* تنسيق الجدول على الشاشات الصغيرة */
       @media (max-width: 430px) {
         .table {
           font-size: 10px;
@@ -165,6 +163,9 @@
         <h2 class="fs-5">
           الجدول الثالث - ليوم
           <span class="header-date" id="hijri-date">
+            <select class="hijri-select" name="header-week-day">
+              <!-- سيتم تعبئتها ديناميكيًا -->
+            </select>
             <select class="hijri-select" name="header-hijri-day">
               <!-- سيتم تعبئتها ديناميكيًا -->
             </select>
@@ -224,10 +225,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      // قيم افتراضية للتاريخ الهجري
+      // قيم افتراضية للتاريخ الهجري ويوم الأسبوع
       let hijriYear = 1446;
       let hijriMonth = 8;
       let hijriDay = 5;
+      let weekDay = "السبت"; // قيمة افتراضية
 
       const hijriMonths = [
         "محرم",
@@ -244,7 +246,17 @@
         "ذو الحجة",
       ];
 
-      // تعبئة قوائم التاريخ الهجري
+      const weekDays = [
+        "السبت",
+        "الأحد",
+        "الإثنين",
+        "الثلاثاء",
+        "الأربعاء",
+        "الخميس",
+        "الجمعة",
+      ];
+
+      // تعبئة قوائم التاريخ الهجري وأيام الأسبوع
       function populateDateSelects() {
         // تعبئة الأيام (1-30)
         const daySelects = document.querySelectorAll(
@@ -290,10 +302,28 @@
             )
             .join("");
         });
+
+        // تعبئة أيام الأسبوع
+        const weekDaySelects = document.querySelectorAll(
+          "select[name='header-week-day'], select[name='week-day']"
+        );
+        weekDaySelects.forEach((select) => {
+          select.innerHTML = weekDays
+            .map(
+              (day) =>
+                `<option value="${day}" ${
+                  day === weekDay ? "selected" : ""
+                }>${day}</option>`
+            )
+            .join("");
+        });
       }
 
       // تحديث التاريخ في العنوان والجدول
       function updateHeaderDate() {
+        const weekDaySelect = document.querySelector(
+          "select[name='header-week-day']"
+        );
         const daySelect = document.querySelector(
           "select[name='header-hijri-day']"
         );
@@ -303,6 +333,7 @@
         const yearSelect = document.querySelector(
           "select[name='header-hijri-year']"
         );
+        weekDay = weekDaySelect.value;
         hijriDay = parseInt(daySelect.value);
         hijriMonth = parseInt(monthSelect.value);
         hijriYear = parseInt(yearSelect.value);
@@ -358,48 +389,58 @@
           .getElementsByTagName("tbody")[0];
         const newRow = table.insertRow();
         newRow.innerHTML = `
-                <td class="date-cell">
-                    <select class="hijri-select" name="hijri-day">
-                        ${Array.from({ length: 30 }, (_, i) => i + 1)
-                          .map(
-                            (day) =>
-                              `<option value="${day}" ${
-                                day === hijriDay ? "selected" : ""
-                              }>${day}</option>`
-                          )
-                          .join("")}
-                    </select>
-                    <select class="hijri-select" name="hijri-month">
-                        ${hijriMonths
-                          .map(
-                            (m, i) =>
-                              `<option value="${i + 1}" ${
-                                i + 1 === hijriMonth ? "selected" : ""
-                              }>${m}</option>`
-                          )
-                          .join("")}
-                    </select>
-                    <select class="hijri-select" name="hijri-year">
-                        ${Array.from({ length: 41 }, (_, i) => 1430 + i)
-                          .map(
-                            (year) =>
-                              `<option value="${year}" ${
-                                year === hijriYear ? "selected" : ""
-                              }>${year}</option>`
-                          )
-                          .join("")}
-                    </select>
-                </td>
-                <td>
-                    <input type="time" class="time-input" name="task-time" value="09:00">
-                </td>
-                <td contenteditable="true">دورية</td>
-                <td contenteditable="true">المنطقة أ</td>
-                <td class="action-buttons">
-                    <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
-                    <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
-                </td>
-            `;
+          <td class="date-cell">
+            <select class="hijri-select" name="week-day">
+              ${weekDays
+                .map(
+                  (day) =>
+                    `<option value="${day}" ${
+                      day === weekDay ? "selected" : ""
+                    }>${day}</option>`
+                )
+                .join("")}
+            </select>
+            <select class="hijri-select" name="hijri-day">
+              ${Array.from({ length: 30 }, (_, i) => i + 1)
+                .map(
+                  (day) =>
+                    `<option value="${day}" ${
+                      day === hijriDay ? "selected" : ""
+                    }>${day}</option>`
+                )
+                .join("")}
+            </select>
+            <select class="hijri-select" name="hijri-month">
+              ${hijriMonths
+                .map(
+                  (m, i) =>
+                    `<option value="${i + 1}" ${
+                      i + 1 === hijriMonth ? "selected" : ""
+                    }>${m}</option>`
+                )
+                .join("")}
+            </select>
+            <select class="hijri-select" name="hijri-year">
+              ${Array.from({ length: 41 }, (_, i) => 1430 + i)
+                .map(
+                  (year) =>
+                    `<option value="${year}" ${
+                      year === hijriYear ? "selected" : ""
+                    }>${year}</option>`
+                )
+                .join("")}
+            </select>
+          </td>
+          <td>
+            <input type="time" class="time-input" name="task-time" value="09:00">
+          </td>
+          <td contenteditable="true">دورية</td>
+          <td contenteditable="true">المنطقة أ</td>
+          <td class="action-buttons">
+            <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
+            <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
+          </td>
+        `;
         saveTableData(tableId);
         sortTableByTime(tableId);
       }
@@ -444,6 +485,9 @@
         const data = [];
         for (let row of rows) {
           const cells = row.getElementsByTagName("td");
+          const weekDay = cells[0].querySelector(
+            "select[name='week-day']"
+          ).value;
           const day = cells[0].querySelector("select[name='hijri-day']").value;
           const month = cells[0].querySelector(
             "select[name='hijri-month']"
@@ -455,7 +499,7 @@
             "input[name='task-time']"
           ).value;
           data.push([
-            `${day} ${hijriMonths[month - 1]} ${year}`,
+            `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
             taskTime,
             cells[2].innerText,
             cells[3].innerText,
@@ -472,104 +516,121 @@
         if (savedData) {
           table.innerHTML = "";
           JSON.parse(savedData).forEach((rowData) => {
-            const [day, monthName, year] = rowData[0].split(" ");
+            const [weekDay, day, monthName, year] = rowData[0].split(" ");
             const month = hijriMonths.indexOf(monthName) + 1;
             const row = table.insertRow();
             row.innerHTML = `
-                        <td class="date-cell">
-                            <select class="hijri-select" name="hijri-day">
-                                ${Array.from({ length: 30 }, (_, i) => i + 1)
-                                  .map(
-                                    (d) =>
-                                      `<option value="${d}" ${
-                                        d === parseInt(day) ? "selected" : ""
-                                      }>${d}</option>`
-                                  )
-                                  .join("")}
-                            </select>
-                            <select class="hijri-select" name="hijri-month">
-                                ${hijriMonths
-                                  .map(
-                                    (m, i) =>
-                                      `<option value="${i + 1}" ${
-                                        i + 1 === parseInt(month)
-                                          ? "selected"
-                                          : ""
-                                      }>${m}</option>`
-                                  )
-                                  .join("")}
-                            </select>
-                            <select class="hijri-select" name="hijri-year">
-                                ${Array.from({ length: 41 }, (_, i) => 1430 + i)
-                                  .map(
-                                    (y) =>
-                                      `<option value="${y}" ${
-                                        y === parseInt(year) ? "selected" : ""
-                                      }>${y}</option>`
-                                  )
-                                  .join("")}
-                            </select>
-                        </td>
-                        <td>
-                            <input type="time" class="time-input" name="task-time" value="${
-                              rowData[1]
-                            }">
-                        </td>
-                        <td contenteditable="false">${rowData[2]}</td>
-                        <td contenteditable="false">${rowData[3]}</td>
-                        <td class="action-buttons">
-                            <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
-                            <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
-                        </td>
-                    `;
+              <td class="date-cell">
+                <select class="hijri-select" name="week-day">
+                  ${weekDays
+                    .map(
+                      (d) =>
+                        `<option value="${d}" ${
+                          d === weekDay ? "selected" : ""
+                        }>${d}</option>`
+                    )
+                    .join("")}
+                </select>
+                <select class="hijri-select" name="hijri-day">
+                  ${Array.from({ length: 30 }, (_, i) => i + 1)
+                    .map(
+                      (d) =>
+                        `<option value="${d}" ${
+                          d === parseInt(day) ? "selected" : ""
+                        }>${d}</option>`
+                    )
+                    .join("")}
+                </select>
+                <select class="hijri-select" name="hijri-month">
+                  ${hijriMonths
+                    .map(
+                      (m, i) =>
+                        `<option value="${i + 1}" ${
+                          i + 1 === parseInt(month) ? "selected" : ""
+                        }>${m}</option>`
+                    )
+                    .join("")}
+                </select>
+                <select class="hijri-select" name="hijri-year">
+                  ${Array.from({ length: 41 }, (_, i) => 1430 + i)
+                    .map(
+                      (y) =>
+                        `<option value="${y}" ${
+                          y === parseInt(year) ? "selected" : ""
+                        }>${y}</option>`
+                    )
+                    .join("")}
+                </select>
+              </td>
+              <td>
+                <input type="time" class="time-input" name="task-time" value="${
+                  rowData[1]
+                }">
+              </td>
+              <td contenteditable="false">${rowData[2]}</td>
+              <td contenteditable="false">${rowData[3]}</td>
+              <td class="action-buttons">
+                <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
+                <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
+              </td>
+            `;
           });
           sortTableByTime(tableId);
         } else {
-          // إضافة المهمة الافتراضية من الكود الأصلي
           const row = table.insertRow();
           row.innerHTML = `
-                    <td class="date-cell">
-                        <select class="hijri-select" name="hijri-day">
-                            ${Array.from({ length: 30 }, (_, i) => i + 1)
-                              .map(
-                                (day) =>
-                                  `<option value="${day}" ${
-                                    day === hijriDay ? "selected" : ""
-                                  }>${day}</option>`
-                              )
-                              .join("")}
-                        </select>
-                        <select class="hijri-select" name="hijri-month">
-                            ${hijriMonths
-                              .map(
-                                (m, i) =>
-                                  `<option value="${i + 1}" ${
-                                    i + 1 === hijriMonth ? "selected" : ""
-                                  }>${m}</option>`
-                              )
-                              .join("")}
-                        </select>
-                        <select class="hijri-select" name="hijri-year">
-                            ${Array.from({ length: 41 }, (_, i) => 1430 + i)
-                              .map(
-                                (year) =>
-                                  `<option value="${year}" ${
-                                    year === hijriYear ? "selected" : ""
-                                  }>${year}</option>`
-                              )
-                              .join("")}
-                        </select>
-                    </td>
-                    <td>
-                        <input type="time" class="time-input" name="task-time" value="09:00">
-                    </td>
-                    <td contenteditable="true">دورية</td>
-                    <td contenteditable="true">المنطقة أ</td>
-                    <td class="action-buttons">
-                        <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
-                        <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
-                    </td>
-                `;
+            <td class="date-cell">
+              <select class="hijri-select" name="week-day">
+                ${weekDays
+                  .map(
+                    (day) =>
+                      `<option value="${day}" ${
+                        day === weekDay ? "selected" : ""
+                      }>${day}</option>`
+                  )
+                  .join("")}
+              </select>
+              <select class="hijri-select" name="hijri-day">
+                ${Array.from({ length: 30 }, (_, i) => i + 1)
+                  .map(
+                    (day) =>
+                      `<option value="${day}" ${
+                        day === hijriDay ? "selected" : ""
+                      }>${day}</option>`
+                  )
+                  .join("")}
+              </select>
+              <select class="hijri-select" name="hijri-month">
+                ${hijriMonths
+                  .map(
+                    (m, i) =>
+                      `<option value="${i + 1}" ${
+                        i + 1 === hijriMonth ? "selected" : ""
+                      }>${m}</option>`
+                  )
+                  .join("")}
+              </select>
+              <select class="hijri-select" name="hijri-year">
+                ${Array.from({ length: 41 }, (_, i) => 1430 + i)
+                  .map(
+                    (year) =>
+                      `<option value="${year}" ${
+                        year === hijriYear ? "selected" : ""
+                      }>${year}</option>`
+                  )
+                  .join("")}
+              </select>
+            </td>
+            <td>
+              <input type="time" class="time-input" name="task-time" value="09:00">
+            </td>
+            <td contenteditable="true">دورية</td>
+            <td contenteditable="true">المنطقة أ</td>
+            <td class="action-buttons">
+              <button class="btn btn-warning btn-sm edit-btn" onclick="editRow(this)">تعديل</button>
+              <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this)">اكتمال</button>
+            </td>
+          `;
           saveTableData(tableId);
           sortTableByTime(tableId);
         }
@@ -583,37 +644,47 @@
         for (let row of rows) {
           const dateCell = row.cells[0];
           dateCell.innerHTML = `
-                    <select class="hijri-select" name="hijri-day">
-                        ${Array.from({ length: 30 }, (_, i) => i + 1)
-                          .map(
-                            (day) =>
-                              `<option value="${day}" ${
-                                day === hijriDay ? "selected" : ""
-                              }>${day}</option>`
-                          )
-                          .join("")}
-                    </select>
-                    <select class="hijri-select" name="hijri-month">
-                        ${hijriMonths
-                          .map(
-                            (m, i) =>
-                              `<option value="${i + 1}" ${
-                                i + 1 === hijriMonth ? "selected" : ""
-                              }>${m}</option>`
-                          )
-                          .join("")}
-                    </select>
-                    <select class="hijri-select" name="hijri-year">
-                        ${Array.from({ length: 41 }, (_, i) => 1430 + i)
-                          .map(
-                            (year) =>
-                              `<option value="${year}" ${
-                                year === hijriYear ? "selected" : ""
-                              }>${year}</option>`
-                          )
-                          .join("")}
-                    </select>
-                `;
+            <select class="hijri-select" name="week-day">
+              ${weekDays
+                .map(
+                  (day) =>
+                    `<option value="${day}" ${
+                      day === weekDay ? "selected" : ""
+                    }>${day}</option>`
+                )
+                .join("")}
+            </select>
+            <select class="hijri-select" name="hijri-day">
+              ${Array.from({ length: 30 }, (_, i) => i + 1)
+                .map(
+                  (day) =>
+                    `<option value="${day}" ${
+                      day === hijriDay ? "selected" : ""
+                    }>${day}</option>`
+                )
+                .join("")}
+            </select>
+            <select class="hijri-select" name="hijri-month">
+              ${hijriMonths
+                .map(
+                  (m, i) =>
+                    `<option value="${i + 1}" ${
+                      i + 1 === hijriMonth ? "selected" : ""
+                    }>${m}</option>`
+                )
+                .join("")}
+            </select>
+            <select class="hijri-select" name="hijri-year">
+              ${Array.from({ length: 41 }, (_, i) => 1430 + i)
+                .map(
+                  (year) =>
+                    `<option value="${year}" ${
+                      year === hijriYear ? "selected" : ""
+                    }>${year}</option>`
+                )
+                .join("")}
+            </select>
+          `;
         }
       }
 
@@ -621,7 +692,9 @@
         populateDateSelects();
         loadTableData("secondTable");
 
-        // ربط الأحداث لتحديث التاريخ عند التغيير في العنوان
+        const weekDaySelect = document.querySelector(
+          "select[name='header-week-day']"
+        );
         const daySelect = document.querySelector(
           "select[name='header-hijri-day']"
         );
@@ -631,6 +704,7 @@
         const yearSelect = document.querySelector(
           "select[name='header-hijri-year']"
         );
+        weekDaySelect.addEventListener("change", updateHeaderDate);
         daySelect.addEventListener("change", updateHeaderDate);
         monthSelect.addEventListener("change", updateHeaderDate);
         yearSelect.addEventListener("change", updateHeaderDate);

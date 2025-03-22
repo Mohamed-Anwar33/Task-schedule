@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>جدول المهام - الجدول الأول والثاني</title>
+    <title>المهام المؤجلة</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -28,19 +28,10 @@
         max-width: 1200px;
         margin: 0 auto;
       }
-      h2,
-      h3,
-      h4 {
+      h2 {
         color: #2c3e50;
         text-align: center;
-        margin-bottom: 8px;
-      }
-      .small-text {
-        font-size: 12px;
-        text-align: right;
-      }
-      .table-section {
-        margin-bottom: 10px;
+        margin-bottom: 20px;
       }
       .table {
         background-color: #fff;
@@ -48,17 +39,18 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         margin-bottom: 15px;
       }
-      .table-buttons {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        margin-bottom: 20px;
-      }
       .table th,
       .table td {
         text-align: center;
         vertical-align: middle;
         padding: 8px;
+      }
+      .time-input,
+      .time-select,
+      .hijri-select {
+        width: 80px;
+        margin: 0 2px;
+        display: inline-block;
       }
       .action-buttons {
         display: flex;
@@ -66,142 +58,90 @@
         gap: 5px;
         flex-wrap: wrap;
       }
-      .edit-btn,
-      .complete-btn {
+      .edit-btn {
         margin: 2px;
         padding: 4px 8px;
         font-size: 12px;
         white-space: nowrap;
       }
-      .completed-task {
-        background-color: #d4edda !important;
-        text-decoration: line-through;
-      }
-      .time-input,
-      .hijri-select {
-        width: 80px;
-        margin: 0 2px;
-        display: inline-block;
-      }
-      .date-controls {
+      .site-start-container {
         display: flex;
-        gap: 5px;
+        align-items: center;
         justify-content: center;
+        gap: 5px;
       }
-      .header-date {
-        display: inline-block;
+      .site-start-container label {
+        font-size: 12px;
+        margin: 0;
+      }
+      .site-start-container input[type="time"],
+      .site-start-container input[type="text"] {
+        padding: 2px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+      .site-start-container input[type="text"] {
+        width: 120px;
+      }
+      @media print {
+        .action-buttons,
+        button {
+          display: none;
+        }
       }
       @media (max-width: 430px) {
         .table {
           font-size: 9px;
-          min-width: 600px; /* للسماح بالتمرير الأفقي */
+          min-width: 600px;
         }
         .table-responsive {
           overflow-x: auto;
         }
-        .edit-btn,
-        .complete-btn {
-          padding: 2px 4px;
-          font-size: 9px;
-          min-width: 50px;
-        }
         .container {
           padding: 5px;
         }
-        .action-buttons {
-          flex-direction: column; /* الأزرار في عمود رأسي */
-          gap: 2px;
-          justify-content: center;
-        }
         .time-input,
+        .time-select,
         .hijri-select {
           width: 50px;
           font-size: 9px;
+        }
+        .action-buttons {
+          flex-direction: column;
+          gap: 2px;
+          justify-content: center;
+        }
+        .edit-btn {
+          padding: 2px 4px;
+          font-size: 9px;
+          min-width: 50px;
         }
         .table th,
         .table td {
           padding: 3px;
         }
         .table td {
-          white-space: normal; /* للسماح بتكسير النص */
+          white-space: normal;
           line-height: 1.2;
         }
-      }
-      @media print {
-        .edit-btn,
-        .complete-btn,
-        .print-btn,
-        .navigation-buttons {
-          display: none;
+        .site-start-container input[type="text"] {
+          width: 80px;
         }
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <!-- العناوين -->
-      <div class="text-center mt-3">
-        <div class="small-text">
-          <span class="editable" id="title1">السرية الأولى</span>
-          <button
-            class="btn btn-warning btn-sm edit-btn"
-            onclick="editText('title1')"
-          >
-            تعديل
-          </button>
-        </div>
-        <div class="small-text">
-          <span class="editable" id="title2">فصيل (1)</span>
-          <button
-            class="btn btn-warning btn-sm edit-btn"
-            onclick="editText('title2')"
-          >
-            تعديل
-          </button>
-        </div>
-        <div class="small-text">
-          <span class="editable" id="title3">مجموعة (7)</span>
-          <button
-            class="btn btn-warning btn-sm edit-btn"
-            onclick="editText('title3')"
-          >
-            تعديل
-          </button>
-        </div>
-        <h4 class="header fs-6 editable" id="title4">
-          بيان بالمهام المكلفة بها قوة المهام والواجبات الخاصة ليوم
-          <span class="header-date" id="hijri-date">
-            <select class="hijri-select" name="header-hijri-day">
-              <!-- سيتم تعبئتها ديناميكيًا -->
-            </select>
-            <select class="hijri-select" name="header-hijri-month">
-              <!-- سيتم تعبئتها ديناميكيًا -->
-            </select>
-            <select class="hijri-select" name="header-hijri-year">
-              <!-- سيتم تعبئتها ديناميكيًا -->
-            </select>
-          </span>
-        </h4>
-        <div class="date-controls mt-2">
-          <button class="btn btn-warning btn-sm" onclick="changeDate(1)">
-            اليوم التالي
-          </button>
-          <button class="btn btn-warning btn-sm" onclick="changeDate(-1)">
-            اليوم السابق
-          </button>
-        </div>
-      </div>
-
-      <!-- الجدول الأول -->
-      <div class="table-responsive table-section">
+      <h2>المهام المستقبلية</h2>
+      <div class="table-responsive">
         <table
           class="table table-bordered table-striped text-center align-middle"
-          id="mainTable1"
+          id="pendingTable"
         >
           <thead class="table-dark">
             <tr>
               <th>اليوم والتاريخ</th>
-              <th>الاستعداد والبداية</th>
               <th>المباشرة بالموقع</th>
               <th>نوع المهمة</th>
               <th>الموقع</th>
@@ -213,80 +153,16 @@
             <!-- سيتم تعبئة الجدول ديناميكيًا -->
           </tbody>
         </table>
-        <div class="table-buttons mt-3">
-          <button
-            class="btn btn-success btn-sm"
-            onclick="addNewRow('mainTable1')"
-          >
-            إضافة صف
-          </button>
-          <button
-            class="btn btn-primary btn-sm print-btn"
-            onclick="printTable('mainTable1')"
-          >
-            طباعة
-          </button>
-        </div>
       </div>
-
-      <!-- الجدول الثاني -->
-      <div class="table-responsive table-section">
-        <table
-          class="table table-bordered table-striped text-center align-middle"
-          id="mainTable2"
+      <div class="text-center mt-4">
+        <a href="index.html" class="btn btn-secondary btn-sm"
+          >العودة إلى الجداول</a
         >
-          <thead class="table-dark">
-            <tr>
-              <th>اليوم والتاريخ</th>
-              <th>الاستعداد والبداية</th>
-              <th>المباشرة بالموقع</th>
-              <th>نوع المهمة</th>
-              <th>الموقع</th>
-              <th>المطلوب</th>
-              <th>تعديل</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- سيتم تعبئة الجدول ديناميكيًا -->
-          </tbody>
-        </table>
-        <div class="table-buttons mt-3">
-          <button
-            class="btn btn-success btn-sm"
-            onclick="addNewRow('mainTable2')"
-          >
-            إضافة صف
-          </button>
-          <button
-            class="btn btn-primary btn-sm print-btn"
-            onclick="printTable('mainTable2')"
-          >
-            طباعة
-          </button>
-        </div>
-      </div>
-
-      <!-- أزرار التنقل -->
-      <div class="text-center mt-4 navigation-buttons">
-        <a href="index.html" class="btn btn-primary btn-sm">الصفحة الرئيسية</a>
-        <a href="second.html" class="btn btn-secondary btn-sm">الجدول الثالث</a>
-        <a href="pending_tasks.html" class="btn btn-warning btn-sm"
-          >المهام المؤجلة</a
-        >
-        <a href="futuretasks.html" class="btn btn-warning btn-sm"
-          >المهام المستقبلية</a
-        >
-        <a href="statistics.html" class="btn btn-secondary btn-sm">الإحصائية</a>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      // قيم افتراضية للتاريخ الهجري
-      let hijriYear = 1446;
-      let hijriMonth = 8;
-      let hijriDay = 5;
-
       const hijriMonths = [
         "محرم",
         "صفر",
@@ -302,560 +178,152 @@
         "ذو الحجة",
       ];
 
-      // تعبئة قوائم التاريخ الهجري
-      function populateDateSelects() {
-        const daySelects = document.querySelectorAll(
-          "select[name='header-hijri-day'], select[name='hijri-day']"
-        );
-        daySelects.forEach((select) => {
-          select.innerHTML = Array.from({ length: 30 }, (_, i) => i + 1)
-            .map(
-              (day) =>
-                `<option value="${day}" ${
-                  day === hijriDay ? "selected" : ""
-                }>${day}</option>`
-            )
-            .join("");
-        });
-
-        const monthSelects = document.querySelectorAll(
-          "select[name='header-hijri-month'], select[name='hijri-month']"
-        );
-        monthSelects.forEach((select) => {
-          select.innerHTML = hijriMonths
-            .map(
-              (m, i) =>
-                `<option value="${i + 1}" ${
-                  i + 1 === hijriMonth ? "selected" : ""
-                }>${m}</option>`
-            )
-            .join("");
-        });
-
-        const yearSelects = document.querySelectorAll(
-          "select[name='header-hijri-year'], select[name='hijri-year']"
-        );
-        yearSelects.forEach((select) => {
-          select.innerHTML = Array.from({ length: 41 }, (_, i) => 1430 + i)
-            .map(
-              (year) =>
-                `<option value="${year}" ${
-                  year === hijriYear ? "selected" : ""
-                }>${year}</option>`
-            )
-            .join("");
-        });
-      }
-
-      // تحديث التاريخ في العنوان والجداول
-      function updateHeaderDate() {
-        const daySelect = document.querySelector(
-          "select[name='header-hijri-day']"
-        );
-        const monthSelect = document.querySelector(
-          "select[name='header-hijri-month']"
-        );
-        const yearSelect = document.querySelector(
-          "select[name='header-hijri-year']"
-        );
-        hijriDay = parseInt(daySelect.value);
-        hijriMonth = parseInt(monthSelect.value);
-        hijriYear = parseInt(yearSelect.value);
-        updateAllTables();
-        saveTableData("mainTable1");
-        saveTableData("mainTable2");
-      }
-
-      // تغيير التاريخ الهجري
-      function changeDate(delta) {
-        hijriDay += delta;
-        if (hijriDay > 30) {
-          hijriDay = 1;
-          hijriMonth++;
-          if (hijriMonth > 12) {
-            hijriMonth = 1;
-            hijriYear++;
-          }
-        } else if (hijriDay < 1) {
-          hijriDay = 30;
-          hijriMonth--;
-          if (hijriMonth < 1) {
-            hijriMonth = 12;
-            hijriYear--;
-          }
-        }
-        populateDateSelects();
-        updateAllTables();
-        saveTableData("mainTable1");
-        saveTableData("mainTable2");
-      }
-
-      // ترتيب المهام بناءً على وقت المباشرة
-      function sortTableByStartTime(tableId) {
+      function loadPendingTasks() {
         const table = document
-          .getElementById(tableId)
+          .getElementById("pendingTable")
           .getElementsByTagName("tbody")[0];
-        const rows = Array.from(table.getElementsByTagName("tr"));
-        rows.sort((a, b) => {
-          const timeA = a.cells[2].querySelector(
-            "input[name='site-start-time']"
-          ).value;
-          const timeB = b.cells[2].querySelector(
-            "input[name='site-start-time']"
-          ).value;
-          return timeA.localeCompare(timeB);
-        });
+        const pendingTasks = JSON.parse(
+          localStorage.getItem("pending_tasks") || "[]"
+        );
         table.innerHTML = "";
-        rows.forEach((row) => table.appendChild(row));
-      }
-
-      function addNewRow(tableId) {
-        const table = document
-          .getElementById(tableId)
-          .getElementsByTagName("tbody")[0];
-        const newRow = table.insertRow();
-        newRow.innerHTML = `
-                <td class="date-cell">
-                    <select class="hijri-select" name="hijri-day">
-                        ${Array.from({ length: 30 }, (_, i) => i + 1)
-                          .map(
-                            (day) =>
-                              `<option value="${day}" ${
-                                day === hijriDay ? "selected" : ""
-                              }>${day}</option>`
-                          )
-                          .join("")}
-                    </select>
-                    <select class="hijri-select" name="hijri-month">
-                        ${hijriMonths
-                          .map(
-                            (m, i) =>
-                              `<option value="${i + 1}" ${
-                                i + 1 === hijriMonth ? "selected" : ""
-                              }>${m}</option>`
-                          )
-                          .join("")}
-                    </select>
-                    <select class="hijri-select" name="hijri-year">
-                        ${Array.from({ length: 41 }, (_, i) => 1430 + i)
-                          .map(
-                            (year) =>
-                              `<option value="${year}" ${
-                                year === hijriYear ? "selected" : ""
-                              }>${year}</option>`
-                          )
-                          .join("")}
-                    </select>
-                </td>
-                <td>
-                    بداية الانطلاق: <input type="time" class="time-input" name="start-time" value="02:00">
-                    <br>
-                    من الساعة <input type="time" class="time-input" name="task-start-time" value="06:00"> إلى 
-                    <input type="time" class="time-input" name="task-end-time" value="08:00">
-                </td>
-                <td>
-                    المباشرة بالموقع: <input type="time" class="time-input" name="site-start-time" value="06:00">
-                </td>
-                <td contenteditable="true">-</td>
-                <td contenteditable="true">-</td>
-                <td contenteditable="true">-</td>
-                <td class="button-cell">
-                    <div class="action-buttons">
-                        <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}')">تعديل</button>
-                        <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">اكتمال</button>
-                    </div>
-                </td>
-            `;
-        saveTableData(tableId);
-        sortTableByStartTime(tableId);
-      }
-
-      function editTable(tableId) {
-        const table = document
-          .getElementById(tableId)
-          .getElementsByTagName("tbody")[0];
-        const rows = table.getElementsByTagName("tr");
-        for (let row of rows) {
-          const cells = row.getElementsByTagName("td");
-          cells[3].contentEditable = "true";
-          cells[4].contentEditable = "true";
-          cells[5].contentEditable = "true";
-          const editButton = row.querySelector(".edit-btn");
-          editButton.innerText = "حفظ";
-          editButton.className = "btn btn-success btn-sm edit-btn";
-          editButton.onclick = function () {
-            saveTable(tableId);
-          };
-        }
-      }
-
-      function saveTable(tableId) {
-        const table = document
-          .getElementById(tableId)
-          .getElementsByTagName("tbody")[0];
-        const rows = table.getElementsByTagName("tr");
-        for (let row of rows) {
-          const cells = row.getElementsByTagName("td");
-          cells[3].contentEditable = "false";
-          cells[4].contentEditable = "false";
-          cells[5].contentEditable = "false";
-          const editButton = row.querySelector(".edit-btn");
-          editButton.innerText = "تعديل";
-          editButton.className = "btn btn-warning btn-sm edit-btn";
-          editButton.onclick = function () {
-            editTable(tableId);
-          };
-        }
-        saveTableData(tableId);
-        sortTableByStartTime(tableId);
-      }
-
-      function completeTask(button, tableId) {
-        const row = button.closest("tr");
-        row.remove();
-        saveTableData(tableId);
-      }
-
-      function saveTableData(tableId) {
-        const table = document
-          .getElementById(tableId)
-          .getElementsByTagName("tbody")[0];
-        const rows = table.getElementsByTagName("tr");
-        const data = [];
-        for (let row of rows) {
-          const cells = row.getElementsByTagName("td");
-          const day = cells[0].querySelector("select[name='hijri-day']").value;
-          const month = cells[0].querySelector(
-            "select[name='hijri-month']"
-          ).value;
-          const year = cells[0].querySelector(
-            "select[name='hijri-year']"
-          ).value;
-          const startTime = cells[1].querySelector(
-            "input[name='start-time']"
-          ).value;
-          const taskStartTime = cells[1].querySelector(
-            "input[name='task-start-time']"
-          ).value;
-          const taskEndTime = cells[1].querySelector(
-            "input[name='task-end-time']"
-          ).value;
-          const siteStartTime = cells[2].querySelector(
-            "input[name='site-start-time']"
-          ).value;
-          data.push([
-            `${day} ${hijriMonths[month - 1]} ${year}`,
-            `بداية الانطلاق: ${startTime} | من الساعة ${taskStartTime} إلى ${taskEndTime}`,
-            `المباشرة بالموقع: ${siteStartTime}`,
-            cells[3].innerText,
-            cells[4].innerText,
-            cells[5].innerText,
-            false,
-          ]);
-        }
-        localStorage.setItem(tableId + "_tasks", JSON.stringify(data));
-      }
-
-      // Helper function to parse and validate time strings
-      function parseTimeString(timeString, defaultValue = "00:00") {
-        if (
-          !timeString ||
-          timeString === "undefined" ||
-          !timeString.match(/^\d{2}:\d{2}$/)
-        ) {
-          return defaultValue;
-        }
-        return timeString;
-      }
-
-      function loadTableData(tableId) {
-        const table = document
-          .getElementById(tableId)
-          .getElementsByTagName("tbody")[0];
-        const savedData = localStorage.getItem(tableId + "_tasks");
-        if (savedData) {
-          table.innerHTML = "";
-          JSON.parse(savedData).forEach((rowData) => {
-            const [day, monthName, year] = rowData[0].split(" ");
-            const month = hijriMonths.indexOf(monthName) + 1;
-
-            // Parse startTime safely
-            let startTimeParts = rowData[1] ? rowData[1].split(" | ") : [];
-            let startTime = "02:00",
-              taskStartTime = "06:00",
-              taskEndTime = "08:00";
-            if (startTimeParts.length === 2) {
-              startTime = parseTimeString(
-                startTimeParts[0].replace("بداية الانطلاق: ", "")
-              );
-              let timeRange = startTimeParts[1]
-                .replace("من الساعة ", "")
-                .split(" إلى ");
-              taskStartTime = parseTimeString(timeRange[0]);
-              taskEndTime = parseTimeString(timeRange[1]);
-            }
-
-            // Parse siteStartTime safely
-            let siteStartTime = parseTimeString(
-              rowData[2] ? rowData[2].replace("المباشرة بالموقع: ", "") : ""
-            );
-
-            const row = table.insertRow();
-            row.innerHTML = `
-                        <td class="date-cell">
-                            <select class="hijri-select" name="hijri-day">
-                                ${Array.from({ length: 30 }, (_, i) => i + 1)
-                                  .map(
-                                    (d) =>
-                                      `<option value="${d}" ${
-                                        d === parseInt(day) ? "selected" : ""
-                                      }>${d}</option>`
-                                  )
-                                  .join("")}
-                            </select>
-                            <select class="hijri-select" name="hijri-month">
-                                ${hijriMonths
-                                  .map(
-                                    (m, i) =>
-                                      `<option value="${i + 1}" ${
-                                        i + 1 === parseInt(month)
-                                          ? "selected"
-                                          : ""
-                                      }>${m}</option>`
-                                  )
-                                  .join("")}
-                            </select>
-                            <select class="hijri-select" name="hijri-year">
-                                ${Array.from({ length: 41 }, (_, i) => 1430 + i)
-                                  .map(
-                                    (y) =>
-                                      `<option value="${y}" ${
-                                        y === parseInt(year) ? "selected" : ""
-                                      }>${y}</option>`
-                                  )
-                                  .join("")}
-                            </select>
-                        </td>
-                        <td>
-                            بداية الانطلاق: <input type="time" class="time-input" name="start-time" value="${startTime}">
-                            <br>
-                            من الساعة <input type="time" class="time-input" name="task-start-time" value="${taskStartTime}"> إلى 
-                            <input type="time" class="time-input" name="task-end-time" value="${taskEndTime}">
-                        </td>
-                        <td>
-                            المباشرة بالموقع: <input type="time" class="time-input" name="site-start-time" value="${siteStartTime}">
-                        </td>
-                        <td contenteditable="false">${rowData[3]}</td>
-                        <td contenteditable="false">${rowData[4]}</td>
-                        <td contenteditable="false">${rowData[5]}</td>
-                        <td class="button-cell">
-                            <div class="action-buttons">
-                                <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}')">تعديل</button>
-                                <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">اكتمال</button>
-                            </div>
-                        </td>
-                    `;
-          });
-          sortTableByStartTime(tableId);
-        } else {
-          // إضافة المهام الافتراضية من الصورة
-          const defaultTasks = [
-            {
-              startTime: "02:00",
-              taskStartTime: "06:00",
-              taskEndTime: "08:00",
-              siteStartTime: "06:00",
-              type: "الاستعداد",
-              location: "-",
-              required: "-",
-            },
-            {
-              startTime: "02:00",
-              taskStartTime: "03:30",
-              taskEndTime: "12:00",
-              siteStartTime: "03:30",
-              type: "الاستعداد",
-              location: "-",
-              required: "-",
-            },
-            {
-              startTime: "02:00",
-              taskStartTime: "13:30",
-              taskEndTime: "15:55",
-              siteStartTime: "13:30",
-              type: "الاستعداد",
-              location: "-",
-              required: "-",
-            },
-            {
-              startTime: "02:00",
-              taskStartTime: "14:00",
-              taskEndTime: "15:00",
-              siteStartTime: "14:00",
-              type: "الاستعداد",
-              location: "-",
-              required: "-",
-            },
-          ];
-          defaultTasks.forEach((task) => {
-            const row = table.insertRow();
-            row.innerHTML = `
-                        <td class="date-cell">
-                            <select class="hijri-select" name="hijri-day">
-                                ${Array.from({ length: 30 }, (_, i) => i + 1)
-                                  .map(
-                                    (day) =>
-                                      `<option value="${day}" ${
-                                        day === hijriDay ? "selected" : ""
-                                      }>${day}</option>`
-                                  )
-                                  .join("")}
-                            </select>
-                            <select class="hijri-select" name="hijri-month">
-                                ${hijriMonths
-                                  .map(
-                                    (m, i) =>
-                                      `<option value="${i + 1}" ${
-                                        i + 1 === hijriMonth ? "selected" : ""
-                                      }>${m}</option>`
-                                  )
-                                  .join("")}
-                            </select>
-                            <select class="hijri-select" name="hijri-year">
-                                ${Array.from({ length: 41 }, (_, i) => 1430 + i)
-                                  .map(
-                                    (year) =>
-                                      `<option value="${year}" ${
-                                        year === hijriYear ? "selected" : ""
-                                      }>${year}</option>`
-                                  )
-                                  .join("")}
-                            </select>
-                        </td>
-                        <td>
-                            بداية الانطلاق: <input type="time" class="time-input" name="start-time" value="${
-                              task.startTime
-                            }">
-                            <br>
-                            من الساعة <input type="time" class="time-input" name="task-start-time" value="${
-                              task.taskStartTime
-                            }"> إلى 
-                            <input type="time" class="time-input" name="task-end-time" value="${
-                              task.taskEndTime
-                            }">
-                        </td>
-                        <td>
-                            المباشرة بالموقع: <input type="time" class="time-input" name="site-start-time" value="${
-                              task.siteStartTime
-                            }">
-                        </td>
-                        <td contenteditable="true">${task.type}</td>
-                        <td contenteditable="true">${task.location}</td>
-                        <td contenteditable="true">${task.required}</td>
-                        <td class="button-cell">
-                            <div class="action-buttons">
-                                <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}')">تعديل</button>
-                                <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">اكتمال</button>
-                            </div>
-                        </td>
-                    `;
-          });
-          saveTableData(tableId);
-          sortTableByStartTime(tableId);
-        }
-      }
-
-      function updateAllTables() {
-        ["mainTable1", "mainTable2"].forEach((tableId) => {
-          const table = document
-            .getElementById(tableId)
-            .getElementsByTagName("tbody")[0];
-          const rows = table.getElementsByTagName("tr");
-          for (let row of rows) {
-            const dateCell = row.cells[0];
-            dateCell.innerHTML = `
-                        <select class="hijri-select" name="hijri-day">
-                            ${Array.from({ length: 30 }, (_, i) => i + 1)
-                              .map(
-                                (day) =>
-                                  `<option value="${day}" ${
-                                    day === hijriDay ? "selected" : ""
-                                  }>${day}</option>`
-                              )
-                              .join("")}
-                        </select>
-                        <select class="hijri-select" name="hijri-month">
-                            ${hijriMonths
-                              .map(
-                                (m, i) =>
-                                  `<option value="${i + 1}" ${
-                                    i + 1 === hijriMonth ? "selected" : ""
-                                  }>${m}</option>`
-                              )
-                              .join("")}
-                        </select>
-                        <select class="hijri-select" name="hijri-year">
-                            ${Array.from({ length: 41 }, (_, i) => 1430 + i)
-                              .map(
-                                (year) =>
-                                  `<option value="${year}" ${
-                                    year === hijriYear ? "selected" : ""
-                                  }>${year}</option>`
-                              )
-                              .join("")}
-                        </select>
-                    `;
-          }
+        pendingTasks.forEach((task, index) => {
+          const [weekDay, day, monthName, year] = task[0].split(" ");
+          const month = hijriMonths.indexOf(monthName) + 1;
+          const [siteStartTime, siteStartText] = task[1]
+            .split(" | ")
+            .map((part) => part.replace("المباشرة بالموقع: ", ""));
+          const taskType = task[2];
+          const row = table.insertRow();
+          row.innerHTML = `
+            <td class="date-cell">
+              <select class="hijri-select" name="week-day">
+                ${[
+                  "السبت",
+                  "الأحد",
+                  "الإثنين",
+                  "الثلاثاء",
+                  "الأربعاء",
+                  "الخميس",
+                  "الجمعة",
+                ]
+                  .map(
+                    (d) =>
+                      `<option value="${d}" ${
+                        d === weekDay ? "selected" : ""
+                      }>${d}</option>`
+                  )
+                  .join("")}
+              </select>
+              <select class="hijri-select" name="hijri-day">
+                ${Array.from({ length: 30 }, (_, i) => i + 1)
+                  .map(
+                    (d) =>
+                      `<option value="${d}" ${
+                        d === parseInt(day) ? "selected" : ""
+                      }>${d}</option>`
+                  )
+                  .join("")}
+              </select>
+              <select class="hijri-select" name="hijri-month">
+                ${hijriMonths
+                  .map(
+                    (m, i) =>
+                      `<option value="${i + 1}" ${
+                        i + 1 === parseInt(month) ? "selected" : ""
+                      }>${m}</option>`
+                  )
+                  .join("")}
+              </select>
+              <select class="hijri-select" name="hijri-year">
+                ${Array.from({ length: 41 }, (_, i) => 1430 + i)
+                  .map(
+                    (y) =>
+                      `<option value="${y}" ${
+                        y === parseInt(year) ? "selected" : ""
+                      }>${y}</option>`
+                  )
+                  .join("")}
+              </select>
+            </td>
+            <td>
+              <div class="site-start-container">
+                <label>المباشرة بالموقع:</label>
+                <input type="time" class="time-input" name="site-start-time" value="${siteStartTime}">
+                <input type="text" name="site-start-text" value="${siteStartText}" placeholder="نص مفتوح">
+              </div>
+            </td>
+            <td contenteditable="false">${taskType}</td>
+            <td contenteditable="false">${task[3]}</td>
+            <td contenteditable="false">${task[4]}</td>
+            <td class="button-cell">
+              <div class="action-buttons">
+                <button class="btn btn-warning btn-sm edit-btn" onclick="editPendingRow(${index})">تعديل</button>
+              </div>
+            </td>
+          `;
         });
       }
 
-      function printTable(tableId) {
-        window.print();
-      }
-
-      function editText(elementId) {
-        const element = document.getElementById(elementId);
-        const currentValue = element.innerHTML;
-        element.innerHTML = `<input type="text" class="form-control form-control-sm" value="${currentValue}">`;
-        const button = element.nextElementSibling;
-        button.innerText = "حفظ";
-        button.className = "btn btn-success btn-sm edit-btn";
-        button.onclick = function () {
-          saveText(elementId);
+      function editPendingRow(index) {
+        const table = document
+          .getElementById("pendingTable")
+          .getElementsByTagName("tbody")[0];
+        const row = table.rows[index];
+        const cells = row.getElementsByTagName("td");
+        cells[2].contentEditable = "true"; // نوع المهمة
+        cells[3].contentEditable = "true"; // الموقع
+        cells[4].contentEditable = "true"; // المطلوب
+        const editButton = row.querySelector(".edit-btn");
+        editButton.innerText = "حفظ";
+        editButton.className = "btn btn-success btn-sm edit-btn";
+        editButton.onclick = function () {
+          savePendingRow(index);
         };
       }
 
-      function saveText(elementId) {
-        const element = document.getElementById(elementId);
-        const input = element.getElementsByTagName("input")[0];
-        element.innerHTML = input.value;
-        const button = element.nextElementSibling;
-        button.innerText = "تعديل";
-        button.className = "btn btn-warning btn-sm edit-btn";
-        button.onclick = function () {
-          editText(elementId);
+      function savePendingRow(index) {
+        const table = document
+          .getElementById("pendingTable")
+          .getElementsByTagName("tbody")[0];
+        const row = table.rows[index];
+        const cells = row.getElementsByTagName("td");
+        const weekDay = cells[0].querySelector("select[name='week-day']").value;
+        const day = cells[0].querySelector("select[name='hijri-day']").value;
+        const month = cells[0].querySelector(
+          "select[name='hijri-month']"
+        ).value;
+        const year = cells[0].querySelector("select[name='hijri-year']").value;
+        const siteStartTime = cells[1].querySelector(
+          "input[name='site-start-time']"
+        ).value;
+        const siteStartText = cells[1].querySelector(
+          "input[name='site-start-text']"
+        ).value;
+        const taskType = cells[2].innerText; // نوع المهمة
+        const pendingTasks = JSON.parse(
+          localStorage.getItem("pending_tasks") || "[]"
+        );
+        pendingTasks[index] = [
+          `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
+          `المباشرة بالموقع: ${siteStartTime} | ${siteStartText}`,
+          taskType,
+          cells[3].innerText,
+          cells[4].innerText,
+        ];
+        localStorage.setItem("pending_tasks", JSON.stringify(pendingTasks));
+        cells[2].contentEditable = "false";
+        cells[3].contentEditable = "false";
+        cells[4].contentEditable = "false";
+        const editButton = row.querySelector(".edit-btn");
+        editButton.innerText = "تعديل";
+        editButton.className = "btn btn-warning btn-sm edit-btn";
+        editButton.onclick = function () {
+          editPendingRow(index);
         };
-        localStorage.setItem(elementId, input.value);
       }
 
       document.addEventListener("DOMContentLoaded", function () {
-        populateDateSelects();
-        loadTableData("mainTable1");
-        loadTableData("mainTable2");
-
-        // ربط الأحداث لتحديث التاريخ عند التغيير في العنوان
-        const daySelect = document.querySelector(
-          "select[name='header-hijri-day']"
-        );
-        const monthSelect = document.querySelector(
-          "select[name='header-hijri-month']"
-        );
-        const yearSelect = document.querySelector(
-          "select[name='header-hijri-year']"
-        );
-        daySelect.addEventListener("change", updateHeaderDate);
-        monthSelect.addEventListener("change", updateHeaderDate);
-        yearSelect.addEventListener("change", updateHeaderDate);
+        loadPendingTasks();
       });
     </script>
   </body>
