@@ -13,6 +13,7 @@
       rel="stylesheet"
     />
     <style>
+      /* الـ CSS كما هو مع تعديل بسيط للألوان */
       html,
       body {
         height: 100%;
@@ -69,18 +70,65 @@
       .edit-btn,
       .complete-btn,
       .delete-btn,
-      .important-btn {
+      .important-btn,
+      .remove-color-btn {
         margin: 2px;
         padding: 4px 8px;
         font-size: 12px;
         white-space: nowrap;
       }
       .completed-task {
-        background-color: #d4edda !important;
-        text-decoration: line-through;
+        text-decoration: line-through !important;
       }
-      .table-danger {
-        background-color: #f8d7da !important;
+      /* الألوان الداكنة للمهام المهمة فقط (مش للاكتمال) */
+      .important-task-dark-red {
+        background-color: #ff9999 !important;
+      }
+      .important-task-dark-purple {
+        background-color: #e6ccff !important;
+      }
+      .important-task-dark-green {
+        background-color: #99cc99 !important;
+      }
+      .important-task-dark-blue {
+        background-color: #99ccff !important;
+      }
+      .important-task-dark-brown {
+        background-color: #d9b38c !important;
+      }
+      .important-task-deep-red {
+        background-color: #e57373 !important;
+      }
+      .important-task-deep-blue {
+        background-color: #64b5f6 !important;
+      }
+      .important-task-deep-green {
+        background-color: #81c784 !important;
+      }
+      .important-task-deep-orange {
+        background-color: #ffb74d !important;
+      }
+      .important-task-deep-purple {
+        background-color: #ba68c8 !important;
+      }
+      .color-picker {
+        margin-top: 5px;
+      }
+      .color-select {
+        width: 120px;
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        font-size: 12px;
+        transition: all 0.3s ease;
+      }
+      .color-select:focus {
+        outline: none;
+        border-color: #2c3e50;
+        box-shadow: 0 0 5px rgba(44, 62, 80, 0.3);
+      }
+      .color-select option {
+        padding: 5px;
       }
       .notes ul,
       .notes p {
@@ -91,7 +139,8 @@
         margin: 5px 0;
       }
       .time-input,
-      .hijri-select {
+      .hijri-select,
+      .color-select {
         width: 80px;
         margin: 0 2px;
         display: inline-block;
@@ -101,33 +150,18 @@
         gap: 5px;
         justify-content: center;
       }
-      .site-start-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-      }
-      .site-start-container label {
-        font-size: 12px;
-        margin: 0;
-      }
-      .site-start-container input[type="time"],
-      .site-start-container input[type="text"] {
-        padding: 2px;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-        font-size: 12px;
-      }
-      .site-start-container input[type="text"] {
-        width: 120px;
-      }
       @media print {
         .date-controls,
         .table-buttons,
         .edit-column,
         button,
-        .action-buttons {
-          display: none;
+        .action-buttons,
+        .navigation-buttons,
+        a.btn {
+          display: none !important;
+        }
+        .container * {
+          color: #000 !important;
         }
       }
       @media (max-width: 430px) {
@@ -141,7 +175,8 @@
         .edit-btn,
         .complete-btn,
         .delete-btn,
-        .important-btn {
+        .important-btn,
+        .remove-color-btn {
           padding: 2px 4px;
           font-size: 9px;
           min-width: 50px;
@@ -155,12 +190,10 @@
           justify-content: center;
         }
         .time-input,
-        .hijri-select {
+        .hijri-select,
+        .color-select {
           width: 50px;
           font-size: 9px;
-        }
-        .site-start-container input[type="text"] {
-          width: 80px;
         }
         .table th,
         .table td {
@@ -175,7 +208,7 @@
   </head>
   <body>
     <div class="container">
-      <!-- العناوين -->
+      <!-- الـ HTML كما هو -->
       <div class="text-center mt-3">
         <div class="small-text">
           <span class="editable" id="title1">السرية الأولى</span>
@@ -226,27 +259,20 @@
             class="hijri-select"
             id="header-day"
             onchange="updateHeaderDate()"
-          >
-            <!-- سيتم تعبئة الأيام ديناميكيًا -->
-          </select>
+          ></select>
           <select
             class="hijri-select"
             id="header-month"
             onchange="updateHeaderDate()"
-          >
-            <!-- سيتم تعبئة الشهور ديناميكيًا -->
-          </select>
+          ></select>
           <select
             class="hijri-select"
             id="header-year"
             onchange="updateHeaderDate()"
-          >
-            <!-- سيتم تعبئة السنوات ديناميكيًا -->
-          </select>
+          ></select>
         </div>
       </div>
 
-      <!-- الجدول الأول -->
       <div class="table-responsive table-section">
         <table
           class="table table-bordered table-striped text-center align-middle"
@@ -254,6 +280,7 @@
         >
           <thead class="table-dark">
             <tr>
+              <th>التسلسل</th>
               <th>اليوم والتاريخ</th>
               <th>المباشرة بالموقع</th>
               <th>نوع المهمة</th>
@@ -262,9 +289,7 @@
               <th class="edit-column">تعديل</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- سيتم تعبئة الجدول ديناميكيًا -->
-          </tbody>
+          <tbody></tbody>
         </table>
         <div class="table-buttons mt-3">
           <button
@@ -282,7 +307,6 @@
         </div>
       </div>
 
-      <!-- الجدول الثاني -->
       <div class="table-responsive table-section">
         <table
           class="table table-bordered table-striped text-center align-middle"
@@ -298,9 +322,7 @@
               <th class="edit-column">تعديل</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- سيتم تعبئة الجدول ديناميكيًا -->
-          </tbody>
+          <tbody></tbody>
         </table>
         <div class="table-buttons mt-3">
           <button
@@ -318,21 +340,14 @@
         </div>
       </div>
 
-      <!-- المقدمة -->
       <div class="introduction mt-5">
-        <p class="fs-6 text-end" style="margin-right: 30px">
-          <span style="display: block; text-indent: -30px; padding-right: 30px"
-            >ص/ ضباط خفر</span
-          >
-          <span style="display: block; text-indent: -30px; padding-right: 30px"
-            >ص/ رقباء السرايا</span
-          >
-          <span style="display: block; text-indent: -30px; padding-right: 30px"
-            >ص/ العمليات</span
-          >
+        <p class="fs-6 text-center">
+          <span style="display: block">ص/ ضباط خفر</span>
+          <span style="display: block">ص/ رقباء السرايا</span>
+          <span style="display: block">ص/ العمليات</span>
         </p>
         <p class="fs-6 text-end">
-          السلام عليكم ورحمة الله وبركاته، تجولون أعلاه بيان بالمهام الأسبوعية
+          السلام عليكم ورحمة الله وبركاته، تجدون أعلاه بيان بالمهام الأسبوعية
           المراد تغطيتها أمنياً من قبلكم، بالإضافة للمهام الطارئة، لذا عليكم
           متابعة تغطيتها بالوقت المحدد دون أي ملاحظات، مع التنبيه على العموم
           بارتداء السلاح والتجهيزات الميدانية اللازمة لكل مهمة كالخدمة والتنسيق
@@ -340,7 +355,6 @@
         </p>
       </div>
 
-      <!-- الملاحظات -->
       <div class="notes mt-5">
         <h5 class="fs-6 editable" id="notesTitle">
           ملاحظات هامة جدا يجب الاطلاع عليها والتقيد بها حرفياً أثناء الاستلام:
@@ -393,30 +407,34 @@
         </ul>
 
         <div class="signature-section">
-          <p
-            id="signatureName"
-            class="editable text-left"
-            style="
-              font-size: 14px;
-              font-family: 'Tajawal', sans-serif;
-              text-align: left;
-              line-height: 1.2;
-              display: flex;
-              flex-direction: column;
-              align-items: flex-start;
-              width: fit-content;
-              margin: auto;
-              margin-left: 40px;
-              word-spacing: -1px;
-              letter-spacing: -0.5px;
-            "
-          >
-            <span>قائد قوة المهام والواجبات الخاصة</span>
-            <span style="margin-top: 3px">عميد</span>
-            <span style="margin-top: 3px; font-size: 15px"
-              >فيصل بن خالد النفيسه</span
+          <div class="signature-section">
+            <p
+              id="signatureName"
+              class="editable text-left"
+              style="
+                font-size: 14px;
+                font-family: 'Tajawal', sans-serif;
+                text-align: left;
+                line-height: 1.2;
+                width: fit-content;
+                margin: auto;
+                margin-left: 40px;
+                word-spacing: -1px;
+                letter-spacing: -0.5px;
+              "
             >
-          </p>
+              <span><br />قائد قوة المهام والواجبات الخاصة</span
+              ><br style="line-height: 0" />
+              <span style="text-align: right; display: block">عقيد /</span>
+              <span>فيصل بن خالد النفيسة</span>
+            </p>
+            <button
+              class="btn btn-warning btn-sm edit-btn"
+              onclick="editText('signatureName')"
+            >
+              تعديل
+            </button>
+          </div>
           <button
             class="btn btn-warning btn-sm edit-btn"
             onclick="editText('signatureName')"
@@ -426,7 +444,6 @@
         </div>
       </div>
 
-      <!-- أزرار التنقل -->
       <div class="text-center mt-4 navigation-buttons">
         <a href="second.html" class="btn btn-secondary btn-sm">الجدول الثالث</a>
         <a href="pending_tasks.html" class="btn btn-warning btn-sm"
@@ -441,7 +458,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      // قيم افتراضية للتاريخ الهجري
       let hijriYear = 1444;
       let hijriMonth = 8;
       let hijriDay = 5;
@@ -471,7 +487,19 @@
         "الجمعة",
       ];
 
-      // تعبئة قوائم التاريخ الهجري
+      const importantColors = [
+        "important-task-dark-red",
+        "important-task-dark-purple",
+        "important-task-dark-green",
+        "important-task-dark-blue",
+        "important-task-dark-brown",
+        "important-task-deep-red",
+        "important-task-deep-blue",
+        "important-task-deep-green",
+        "important-task-deep-orange",
+        "important-task-deep-purple",
+      ];
+
       function populateDateSelects() {
         const daySelects = document.querySelectorAll(
           "select[name='hijri-day']"
@@ -573,7 +601,6 @@
           .join("");
       }
 
-      // تحديث التاريخ في العنوان
       function updateHeaderDate() {
         weekDay = document.getElementById("header-weekday").value;
         hijriDay = parseInt(document.getElementById("header-day").value);
@@ -589,32 +616,33 @@
         updatePendingTasks();
       }
 
-      // ترتيب المهام بناءً على وقت المباشرة
       function sortTableByStartTime(tableId) {
         const table = document
           .getElementById(tableId)
           .getElementsByTagName("tbody")[0];
         const rows = Array.from(table.getElementsByTagName("tr"));
         rows.sort((a, b) => {
-          const timeA = a.cells[1].querySelector(
-            "input[name='site-start-time']"
-          ).value;
-          const timeB = b.cells[1].querySelector(
-            "input[name='site-start-time']"
-          ).value;
+          const timeA = a.cells[tableId === "mainTable1" ? 2 : 1].innerText;
+          const timeB = b.cells[tableId === "mainTable1" ? 2 : 1].innerText;
           return timeA.localeCompare(timeB);
         });
         table.innerHTML = "";
-        rows.forEach((row) => table.appendChild(row));
+        rows.forEach((row, index) => {
+          if (tableId === "mainTable1") {
+            row.cells[0].innerText = index + 1;
+          }
+          table.appendChild(row);
+        });
       }
 
-      // إضافة صف جديد
       function addNewRow(tableId) {
         const table = document
           .getElementById(tableId)
           .getElementsByTagName("tbody")[0];
         const newRow = table.insertRow();
+        const rowIndex = table.rows.length;
         newRow.innerHTML = `
+          ${tableId === "mainTable1" ? `<td>${rowIndex}</td>` : ""}
           <td class="date-cell">
             <select class="hijri-select" name="week-day">
               ${weekDays
@@ -657,22 +685,17 @@
                 .join("")}
             </select>
           </td>
-          <td>
-            <div class="site-start-container">
-              <label>المباشرة بالموقع:</label>
-              <input type="time" class="time-input" name="site-start-time" value="06:00">
-              <input type="text" name="site-start-text" placeholder="نص مفتوح">
-            </div>
-          </td>
+          <td contenteditable="true">06:00</td>
           <td contenteditable="true">-</td>
           <td contenteditable="true">-</td>
           <td contenteditable="true">-</td>
           <td class="edit-column">
             <div class="action-buttons">
               <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}')">تعديل</button>
-              <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">اكتمال</button>
+              <button class="btn btn-success btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">اكتمال</button>
               <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
-              <button class="btn btn-danger btn-sm important-btn" onclick="toggleImportant(this, '${tableId}')">تحديد كمهمة</button>
+              <button class="btn btn-danger btn-sm important-btn" onclick="showColorPicker(this, '${tableId}')">تحديد اللون</button>
+              <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
             </div>
           </td>
         `;
@@ -681,7 +704,111 @@
         updatePendingTasks();
       }
 
-      // تعديل الجدول
+      // دالة جديدة لزر "اكتمال" بدون ألوان
+      function toggleComplete(button, tableId) {
+        const row = button.closest("tr");
+        const startIndex = tableId === "mainTable1" ? 1 : 0;
+        const dataCells = Array.from(row.querySelectorAll("td")).slice(
+          startIndex,
+          -1
+        );
+        const isCompleted = dataCells[0].classList.contains("completed-task");
+
+        if (isCompleted) {
+          dataCells.forEach((cell) => cell.classList.remove("completed-task"));
+          button.innerText = "اكتمال";
+        } else {
+          dataCells.forEach((cell) => cell.classList.add("completed-task"));
+          button.innerText = "إلغاء الاكتمال";
+        }
+
+        saveTableData(tableId);
+        updatePendingTasks();
+      }
+
+      // إظهار قائمة الألوان لـ "تحديد اللون" فقط
+      function showColorPicker(button, tableId) {
+        const row = button.closest("tr");
+        const actionButtons = row.querySelector(".action-buttons");
+        const existingPicker = actionButtons.querySelector(".color-picker");
+
+        if (existingPicker) {
+          existingPicker.remove();
+          return;
+        }
+
+        const colorNames = [
+          "أحمر داكن",
+          "أرجواني فاتح",
+          "أخضر داكن",
+          "أزرق داكن",
+          "بني فاتح",
+          "أحمر غامق",
+          "أزرق غامق",
+          "أخضر غامق",
+          "برتقالي غامق",
+          "بنفسجي غامق",
+        ];
+
+        const colorPicker = document.createElement("div");
+        colorPicker.className = "color-picker";
+        colorPicker.innerHTML = `
+          <select class="color-select" onchange="applyColor(this, '${tableId}')">
+            <option value="" disabled selected>اختر لونًا</option>
+            ${importantColors
+              .map(
+                (color, index) =>
+                  `<option value="${color}">${colorNames[index]}</option>`
+              )
+              .join("")}
+          </select>
+        `;
+        actionButtons.appendChild(colorPicker);
+      }
+
+      // تطبيق اللون لـ "تحديد اللون" فقط
+      function applyColor(select, tableId) {
+        const row = select.closest("tr");
+        const color = select.value;
+        const button = row.querySelector(".important-btn");
+        const startIndex = tableId === "mainTable1" ? 1 : 0;
+        const dataCells = Array.from(row.querySelectorAll("td")).slice(
+          startIndex,
+          -1
+        );
+
+        if (color) {
+          dataCells.forEach((cell) => {
+            importantColors.forEach((c) => cell.classList.remove(c));
+            cell.classList.add(color);
+          });
+          button.innerText = "إلغاء الأهمية";
+        }
+
+        select.parentElement.remove();
+        saveTableData(tableId);
+        updatePendingTasks();
+      }
+
+      // إزالة اللون
+      function removeColor(button, tableId) {
+        const row = button.closest("tr");
+        const startIndex = tableId === "mainTable1" ? 1 : 0;
+        const dataCells = Array.from(row.querySelectorAll("td")).slice(
+          startIndex,
+          -1
+        );
+        const importantButton = row.querySelector(".important-btn");
+
+        dataCells.forEach((cell) => {
+          importantColors.forEach((c) => cell.classList.remove(c));
+        });
+        importantButton.innerText = "تحديد اللون";
+
+        saveTableData(tableId);
+        updatePendingTasks();
+      }
+
       function editTable(tableId) {
         const table = document
           .getElementById(tableId)
@@ -689,9 +816,11 @@
         const rows = table.getElementsByTagName("tr");
         for (let row of rows) {
           const cells = row.getElementsByTagName("td");
-          cells[2].contentEditable = "true";
-          cells[3].contentEditable = "true";
-          cells[4].contentEditable = "true";
+          const offset = tableId === "mainTable1" ? 1 : 0;
+          cells[1 + offset].contentEditable = "true";
+          cells[2 + offset].contentEditable = "true";
+          cells[3 + offset].contentEditable = "true";
+          cells[4 + offset].contentEditable = "true";
           const editButton = row.querySelector(".edit-btn");
           editButton.innerText = "حفظ";
           editButton.className = "btn btn-success btn-sm edit-btn";
@@ -701,7 +830,6 @@
         }
       }
 
-      // حفظ الجدول
       function saveTable(tableId) {
         const table = document
           .getElementById(tableId)
@@ -709,9 +837,11 @@
         const rows = table.getElementsByTagName("tr");
         for (let row of rows) {
           const cells = row.getElementsByTagName("td");
-          cells[2].contentEditable = "false";
-          cells[3].contentEditable = "false";
-          cells[4].contentEditable = "false";
+          const offset = tableId === "mainTable1" ? 1 : 0;
+          cells[1 + offset].contentEditable = "false";
+          cells[2 + offset].contentEditable = "false";
+          cells[3 + offset].contentEditable = "false";
+          cells[4 + offset].contentEditable = "false";
           const editButton = row.querySelector(".edit-btn");
           editButton.innerText = "تعديل";
           editButton.className = "btn btn-warning btn-sm edit-btn";
@@ -724,48 +854,14 @@
         updatePendingTasks();
       }
 
-      // إكمال المهمة
-      function completeTask(button, tableId) {
-        const row = button.closest("tr");
-        if (row.classList.contains("completed-task")) {
-          row.classList.remove("completed-task");
-          button.innerText = "اكتمال";
-        } else {
-          row.classList.add("completed-task");
-          button.innerText = "إلغاء الاكتمال";
-        }
-        saveTableData(tableId);
-        updatePendingTasks();
-      }
-
-      // حذف المهمة
       function deleteTask(button, tableId) {
         const row = button.closest("tr");
         row.remove();
         saveTableData(tableId);
+        sortTableByStartTime(tableId);
         updatePendingTasks();
       }
 
-      // تحديد المهمة كمهمة أهم
-      function toggleImportant(button, tableId) {
-        const row = button.closest("tr");
-        const index = Array.from(row.parentNode.children).indexOf(row);
-        const tasks = JSON.parse(
-          localStorage.getItem(tableId + "_tasks") || "[]"
-        );
-        tasks[index][6] = !tasks[index][6]; // Toggle the isImportant flag
-        localStorage.setItem(tableId + "_tasks", JSON.stringify(tasks));
-        if (tasks[index][6]) {
-          row.classList.add("table-danger");
-          button.innerText = "إلغاء الأهمية";
-        } else {
-          row.classList.remove("table-danger");
-          button.innerText = "تحديد كمهمة";
-        }
-        saveTableData(tableId);
-      }
-
-      // حفظ بيانات الجدول
       function saveTableData(tableId) {
         const table = document
           .getElementById(tableId)
@@ -774,38 +870,42 @@
         const data = [];
         for (let row of rows) {
           const cells = row.getElementsByTagName("td");
-          const weekDay = cells[0].querySelector(
+          const offset = tableId === "mainTable1" ? 1 : 0;
+          const weekDay = cells[0 + offset].querySelector(
             "select[name='week-day']"
           ).value;
-          const day = cells[0].querySelector("select[name='hijri-day']").value;
-          const month = cells[0].querySelector(
+          const day = cells[0 + offset].querySelector(
+            "select[name='hijri-day']"
+          ).value;
+          const month = cells[0 + offset].querySelector(
             "select[name='hijri-month']"
           ).value;
-          const year = cells[0].querySelector(
+          const year = cells[0 + offset].querySelector(
             "select[name='hijri-year']"
           ).value;
-          const siteStartTime = cells[1].querySelector(
-            "input[name='site-start-time']"
-          ).value;
-          const siteStartText = cells[1].querySelector(
-            "input[name='site-start-text']"
-          ).value;
-          const isCompleted = row.classList.contains("completed-task");
-          const isImportant = row.classList.contains("table-danger");
+          const isCompleted =
+            cells[1 + offset].classList.contains("completed-task");
+          const isImportant = importantColors.some((color) =>
+            cells[1 + offset].classList.contains(color)
+          );
+          const importantColor =
+            importantColors.find((color) =>
+              cells[1 + offset].classList.contains(color)
+            ) || "";
           data.push([
             `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
-            `المباشرة بالموقع: ${siteStartTime} | ${siteStartText}`,
-            cells[2].innerText,
-            cells[3].innerText,
-            cells[4].innerText,
+            cells[1 + offset].innerText,
+            cells[2 + offset].innerText,
+            cells[3 + offset].innerText,
+            cells[4 + offset].innerText,
             isCompleted,
             isImportant,
+            importantColor,
           ]);
         }
         localStorage.setItem(tableId + "_tasks", JSON.stringify(data));
       }
 
-      // تحميل بيانات الجدول
       function loadTableData(tableId) {
         const table = document
           .getElementById(tableId)
@@ -813,18 +913,15 @@
         const savedData = localStorage.getItem(tableId + "_tasks");
         if (savedData) {
           table.innerHTML = "";
-          JSON.parse(savedData).forEach((rowData) => {
+          JSON.parse(savedData).forEach((rowData, index) => {
             const [weekDay, day, monthName, year] = rowData[0].split(" ");
             const month = hijriMonths.indexOf(monthName) + 1;
-            const [siteStartTime, siteStartText] = rowData[1]
-              .split(" | ")
-              .map((part) => part.replace("المباشرة بالموقع: ", ""));
             const isCompleted = rowData[5];
             const isImportant = rowData[6] || false;
+            const importantColor = rowData[7] || "";
             const row = table.insertRow();
-            if (isCompleted) row.classList.add("completed-task");
-            if (isImportant) row.classList.add("table-danger");
             row.innerHTML = `
+              ${tableId === "mainTable1" ? `<td>${index + 1}</td>` : ""}
               <td class="date-cell">
                 <select class="hijri-select" name="week-day">
                   ${weekDays
@@ -867,65 +964,69 @@
                     .join("")}
                 </select>
               </td>
-              <td>
-                <div class="site-start-container">
-                  <label>المباشرة بالموقع:</label>
-                  <input type="time" class="time-input" name="site-start-time" value="${siteStartTime}">
-                  <input type="text" name="site-start-text" value="${siteStartText}" placeholder="نص مفتوح">
-                </div>
-              </td>
+              <td contenteditable="false">${rowData[1]}</td>
               <td contenteditable="false">${rowData[2]}</td>
               <td contenteditable="false">${rowData[3]}</td>
               <td contenteditable="false">${rowData[4]}</td>
               <td class="edit-column">
                 <div class="action-buttons">
                   <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}')">تعديل</button>
-                  <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">${
+                  <button class="btn btn-success btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">${
               isCompleted ? "إلغاء الاكتمال" : "اكتمال"
             }</button>
                   <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
-                  <button class="btn btn-danger btn-sm important-btn" onclick="toggleImportant(this, '${tableId}')">${
-              isImportant ? "إلغاء الأهمية" : "تحديد كمهمة"
+                  <button class="btn btn-danger btn-sm important-btn" onclick="showColorPicker(this, '${tableId}')">${
+              isImportant ? "إلغاء الأهمية" : "تحديد اللون"
             }</button>
+                  <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
                 </div>
               </td>
             `;
+
+            const startIndex = tableId === "mainTable1" ? 1 : 0;
+            const dataCells = Array.from(row.querySelectorAll("td")).slice(
+              startIndex,
+              -1
+            );
+            if (isCompleted) {
+              dataCells.forEach((cell) => cell.classList.add("completed-task"));
+            }
+            if (isImportant && importantColor) {
+              dataCells.forEach((cell) => cell.classList.add(importantColor));
+            }
           });
           sortTableByStartTime(tableId);
         } else {
           const defaultTasks = [
             {
               siteStartTime: "06:00",
-              siteStartText: "",
               type: "الاستعداد",
               location: "-",
               required: "-",
             },
             {
               siteStartTime: "03:30",
-              siteStartText: "",
               type: "الاستعداد",
               location: "-",
               required: "-",
             },
             {
               siteStartTime: "13:30",
-              siteStartText: "",
               type: "الاستعداد",
               location: "-",
               required: "-",
             },
             {
               siteStartTime: "14:00",
-              siteStartText: "",
               type: "الاستعداد",
               location: "-",
               required: "-",
             },
           ];
-          defaultTasks.forEach((task) => {
+          defaultTasks.forEach((task, index) => {
             const row = table.insertRow();
             row.innerHTML = `
+              ${tableId === "mainTable1" ? `<td>${index + 1}</td>` : ""}
               <td class="date-cell">
                 <select class="hijri-select" name="week-day">
                   ${weekDays
@@ -968,26 +1069,17 @@
                     .join("")}
                 </select>
               </td>
-              <td>
-                <div class="site-start-container">
-                  <label>المباشرة بالموقع:</label>
-                  <input type="time" class="time-input" name="site-start-time" value="${
-                    task.siteStartTime
-                  }">
-                  <input type="text" name="site-start-text" value="${
-                    task.siteStartText
-                  }" placeholder="نص مفتوح">
-                </div>
-              </td>
+              <td contenteditable="true">${task.siteStartTime}</td>
               <td contenteditable="true">${task.type}</td>
               <td contenteditable="true">${task.location}</td>
               <td contenteditable="true">${task.required}</td>
               <td class="edit-column">
                 <div class="action-buttons">
                   <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}')">تعديل</button>
-                  <button class="btn btn-success btn-sm complete-btn" onclick="completeTask(this, '${tableId}')">اكتمال</button>
+                  <button class="btn btn-success btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">اكتمال</button>
                   <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
-                  <button class="btn btn-danger btn-sm important-btn" onclick="toggleImportant(this, '${tableId}')">تحديد كمهمة</button>
+                  <button class="btn btn-danger btn-sm important-btn" onclick="showColorPicker(this, '${tableId}')">تحديد اللون</button>
+                  <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
                 </div>
               </td>
             `;
@@ -997,7 +1089,6 @@
         }
       }
 
-      // تحديث جميع الجداول
       function updateAllTables() {
         ["mainTable1", "mainTable2"].forEach((tableId) => {
           const table = document
@@ -1005,7 +1096,8 @@
             .getElementsByTagName("tbody")[0];
           const rows = table.getElementsByTagName("tr");
           for (let row of rows) {
-            const dateCell = row.cells[0];
+            const offset = tableId === "mainTable1" ? 1 : 0;
+            const dateCell = row.cells[0 + offset];
             dateCell.innerHTML = `
               <select class="hijri-select" name="week-day">
                 ${weekDays
@@ -1052,7 +1144,6 @@
         });
       }
 
-      // تحديث المهام المؤجلة
       function updatePendingTasks() {
         const pendingTasks = [];
         ["mainTable1", "mainTable2"].forEach((tableId) => {
@@ -1061,6 +1152,7 @@
           );
           tableData.forEach((task) => {
             if (!task[5]) {
+              // إذا المهمة مش مكتملة
               pendingTasks.push(task);
             }
           });
@@ -1068,20 +1160,10 @@
         localStorage.setItem("pending_tasks", JSON.stringify(pendingTasks));
       }
 
-      // طباعة الجدول
       function printTable(tableId) {
-        // إخفاء الأزرار
-        const buttons = document.querySelectorAll("button, .action-buttons");
-        buttons.forEach((button) => (button.style.display = "none"));
-
-        // طباعة الصفحة
         window.print();
-
-        // إعادة إظهار الأزرار بعد الطباعة
-        buttons.forEach((button) => (button.style.display = ""));
       }
 
-      // تعديل النصوص
       function editText(elementId) {
         const element = document.getElementById(elementId);
         const currentValue = element.innerHTML;
@@ -1094,7 +1176,6 @@
         };
       }
 
-      // حفظ النصوص
       function saveText(elementId) {
         const element = document.getElementById(elementId);
         const input = element.getElementsByTagName("input")[0];
@@ -1108,7 +1189,6 @@
         localStorage.setItem(elementId, input.value);
       }
 
-      // تحميل البيانات عند فتح الصفحة
       document.addEventListener("DOMContentLoaded", function () {
         populateDateSelects();
         loadTableData("mainTable1");
