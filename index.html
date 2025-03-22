@@ -27,6 +27,7 @@
         padding: 15px;
         max-width: 1200px;
         margin: 0 auto;
+        text-align: right;
       }
       h2,
       h3,
@@ -59,6 +60,10 @@
         text-align: center;
         vertical-align: middle;
         padding: 8px;
+      }
+      .table td {
+        font-size: 14px;
+        font-weight: bold;
       }
       /* تعديل عرض الأعمدة */
       .table th:nth-child(1),
@@ -167,13 +172,22 @@
       .color-select option {
         padding: 5px;
       }
+      .notes {
+        text-align: right;
+      }
       .notes ul,
       .notes p {
         font-size: 11px;
       }
+      .signature-section {
+        text-align: left; /* تغيير المحاذاة إلى الجهة اليسرى (الشمال) */
+        width: 100%;
+      }
       .signature-section p {
-        text-align: center;
-        margin: 5px 0;
+        display: block;
+        text-align: left;
+        margin-left: 0;
+        margin-right: auto;
       }
       .time-input,
       .hijri-select,
@@ -243,6 +257,16 @@
         }
         .important-task-deep-purple {
           background-color: #ba68c8 !important;
+        }
+        /* التأكد من أن التوقيع يظهر في الجهة اليسرى عند الطباعة */
+        .signature-section {
+          text-align: left;
+          width: 100%;
+        }
+        .signature-section p {
+          text-align: left;
+          margin-left: 0;
+          margin-right: auto;
         }
       }
       @media (max-width: 430px) {
@@ -435,7 +459,7 @@
         </p>
       </div>
 
-      <div class="notes mt-5">
+      <div class="notes mt-5" style="text-align: right">
         <h5 class="editable" id="notesTitle" style="font-size: 6px">
           ملاحظات هامة جدا يجب الاطلاع عليها والتقيد بها حرفياً أثناء الاستلام:
         </h5>
@@ -486,38 +510,28 @@
           <li>عدم تشغيل السيفتي أثناء التوجه للموقع والمغادرة منه.</li>
         </ul>
 
+        <!-- قسم التوقيع المعاد مع المحاذاة إلى الجهة اليسرى (الشمال) -->
         <div class="signature-section">
-          <div class="signature-section">
-            <p
-              id="signatureName"
-              class="editable text-left"
-              style="
-                font-size: 14px;
-                font-family: 'Tajawal', sans-serif;
-                text-align: left;
-                line-height: 1.2;
-                width: fit-content;
-                margin: auto;
-                margin-left: 40px;
-                word-spacing: -1px;
-                letter-spacing: -0.5px;
-              "
-            >
-              <span>
-                <div>عميد /</div>
-                <div style="padding-right: 50px">
-                  <span>قائد قوة المهام والواجبات الخاصة</span>
-                  <span style="margin-right: 2px">فيصل بن خالد النفيسة</span>
-                </div>
-              </span>
-            </p>
-            <button
-              class="btn btn-warning btn-sm edit-btn"
-              onclick="editText('signatureName')"
-            >
-              تعديل
-            </button>
-          </div>
+          <p
+            id="signatureName"
+            class="editable"
+            style="
+              font-size: 14px;
+              font-family: 'Tajawal', sans-serif;
+              line-height: 1.2;
+              display: block;
+              word-spacing: -1px;
+              letter-spacing: -0.5px;
+            "
+          >
+            <span>
+              <div style="margin-left: 380px">عميد /</div>
+              <div style="padding-right: 50px">
+                <span>قائد قوة المهام والواجبات الخاصة</span>
+                <span style="margin-right: 2px">فيصل بن خالد النفيسة</span>
+              </div>
+            </span>
+          </p>
           <button
             class="btn btn-warning btn-sm edit-btn"
             onclick="editText('signatureName')"
@@ -1188,21 +1202,9 @@
           for (let row of rows) {
             const offset = tableId === "mainTable1" ? 1 : 0;
             const dateCell = row.cells[0 + offset];
-            const weekDay = dateCell.querySelector(
-              "select[name='week-day']"
-            ).value;
-            const day = dateCell.querySelector(
-              "select[name='hijri-day']"
-            ).value;
-            const month = dateCell.querySelector(
-              "select[name='hijri-month']"
-            ).value;
-            const year = dateCell.querySelector(
-              "select[name='hijri-year']"
-            ).value;
-            const dateText = `${weekDay} ${day} ${
-              hijriMonths[month - 1]
-            }، ${year} هـ`;
+            const dateText = `${weekDay} ${hijriDay} ${
+              hijriMonths[hijriMonth - 1]
+            }، ${hijriYear} هـ`;
             dateCell.innerHTML = `
               <select class="hijri-select" name="week-day">
                 ${weekDays
@@ -1219,7 +1221,7 @@
                   .map(
                     (day) =>
                       `<option value="${day}" ${
-                        day === parseInt(day) ? "selected" : ""
+                        day === hijriDay ? "selected" : ""
                       }>${day}</option>`
                   )
                   .join("")}
@@ -1229,7 +1231,7 @@
                   .map(
                     (m, i) =>
                       `<option value="${i + 1}" ${
-                        i + 1 === parseInt(month) ? "selected" : ""
+                        i + 1 === hijriMonth ? "selected" : ""
                       }>${m}</option>`
                   )
                   .join("")}
@@ -1239,7 +1241,7 @@
                   .map(
                     (year) =>
                       `<option value="${year}" ${
-                        year === parseInt(year) ? "selected" : ""
+                        year === hijriYear ? "selected" : ""
                       }>${year}</option>`
                   )
                   .join("")}
