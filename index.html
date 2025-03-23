@@ -13,6 +13,7 @@
       rel="stylesheet"
     />
     <style>
+      /* يبقى الـ CSS كما هو دون تغيير */
       html,
       body {
         height: 100%;
@@ -196,7 +197,7 @@
         display: none;
       }
       #secondPageContent {
-        display: none; /* إخفاء محتوى الصفحة الثانية في العرض العادي */
+        display: none;
       }
       .section {
         margin-top: 20px;
@@ -338,8 +339,8 @@
           background-color: #ba68c8 !important;
         }
         #secondPageContent {
-          display: block !important; /* إظهار الصفحة الثانية عند الطباعة */
-          page-break-before: always; /* فصل الصفحة الثانية في ورقة جديدة */
+          display: block !important;
+          page-break-before: always;
         }
         #secondPageContent .container {
           padding: 5mm;
@@ -367,11 +368,11 @@
           margin: 5mm 0;
         }
         .status-column {
-          display: none !important; /* إخفاء عمود الحالة عند الطباعة */
+          display: none !important;
         }
         .table td:nth-child(7),
         .table th:nth-child(7) {
-          display: none !important; /* إخفاء الخلية السابعة في الصفوف أيضًا */
+          display: none !important;
         }
       }
       @media (max-width: 430px) {
@@ -640,7 +641,6 @@
         </div>
       </div>
 
-      <!-- محتوى الصفحة الثانية مخفي -->
       <div id="secondPageContent">
         <div class="container">
           <div class="section">
@@ -654,13 +654,10 @@
             <p>رئيس العمليات</p>
             <p>رقيب الحركة والآليات</p>
           </div>
-
           <p class="greeting">السلام عليكم ورحمة الله وبركاته</p>
-
           <div class="section">
             <h2 class="subtitle">عن المهمة التالية</h2>
           </div>
-
           <h2 class="title">الجدول الثالث - المهام المكتملة</h2>
           <h4 class="header fs-6">
             بيان بالمهام المكتملة ليوم
@@ -712,7 +709,7 @@
         <a href="pending_tasks.html" class="btn btn-warning btn-sm"
           >المهام المؤجلة</a
         >
-        <a href="feauturetsaks.html" class="btn btn-warning btn-sm"
+        <a href="feauturetasks.html" class="btn btn-warning btn-sm"
           >المهام المستقبلية</a
         >
         <a href="statistics.html" class="btn btn-secondary btn-sm">الإحصائية</a>
@@ -875,16 +872,60 @@
         }، ${hijriYear} هـ`;
         document.getElementById("selected-date").innerText = selectedDate;
         document.getElementById("print-selected-date").innerText = printDate;
-
         document.getElementById("second-selected-date").innerText =
           selectedDate;
         document.getElementById("second-print-selected-date").innerText =
           printDate;
 
+        checkFutureTasks(); // فحص المهام المستقبلية عند تحديث التاريخ
         updateAllTables();
         saveTableData("mainTable1");
         saveTableData("mainTable2");
         updatePendingTasks();
+      }
+
+      function checkFutureTasks() {
+        const futureTasks = JSON.parse(
+          localStorage.getItem("future_tasks") || "[]"
+        );
+        const mainTableTasks = JSON.parse(
+          localStorage.getItem("mainTable1_tasks") || "[]"
+        );
+        let tasksMoved = false;
+
+        const updatedFutureTasks = futureTasks.filter((task) => {
+          const [taskWeekDay, taskDay, taskMonthName, taskYear] =
+            task[0].split(" ");
+          const taskDayNum = parseInt(taskDay);
+          const taskMonthNum = hijriMonths.indexOf(taskMonthName) + 1;
+          const taskYearNum = parseInt(taskYear);
+
+          // مقارنة التاريخ الحالي مع تاريخ المهمة
+          if (
+            taskYearNum < hijriYear ||
+            (taskYearNum === hijriYear && taskMonthNum < hijriMonth) ||
+            (taskYearNum === hijriYear &&
+              taskMonthNum === hijriMonth &&
+              taskDayNum <= hijriDay)
+          ) {
+            mainTableTasks.push(task);
+            tasksMoved = true;
+            return false; // حذف المهمة من المهام المستقبلية
+          }
+          return true; // الاحتفاظ بالمهمة في المهام المستقبلية
+        });
+
+        if (tasksMoved) {
+          localStorage.setItem(
+            "mainTable1_tasks",
+            JSON.stringify(mainTableTasks)
+          );
+          localStorage.setItem(
+            "future_tasks",
+            JSON.stringify(updatedFutureTasks)
+          );
+          loadTableData("mainTable1"); // إعادة تحميل الجدول الأول لعرض المهام المنقولة
+        }
       }
 
       function sortTableByStartTime(tableId) {
@@ -1165,6 +1206,7 @@
             cells[3 + offset].innerText,
             cells[4 + offset].innerText,
             isCompleted,
+            false, // حالة التأجيل (غير مستخدمة هنا ولكن للتوافق مع feauturetsaks.html)
             isImportant,
             importantColor,
           ];
@@ -1185,8 +1227,8 @@
             const [weekDay, day, monthName, year] = rowData[0].split(" ");
             const month = hijriMonths.indexOf(monthName) + 1;
             const isCompleted = rowData[5];
-            const isImportant = rowData[6] || false;
-            const importantColor = rowData[7] || "";
+            const isImportant = rowData[7] || false;
+            const importantColor = rowData[8] || "";
             const dateText = `${weekDay} ${day} ${
               hijriMonths[month - 1]
             }، ${year} هـ`;
@@ -1349,7 +1391,6 @@
             "إلغاء الاكتمال";
           editColumn.innerHTML = isCompleted ? "مكتمل" : "غير مكتمل";
         });
-
         window.print();
       }
 
@@ -1381,6 +1422,7 @@
         hijriYear = parseInt(localStorage.getItem("hijriYear")) || 1444;
 
         populateDateSelects();
+        checkFutureTasks(); // فحص المهام المستقبلية عند تحميل الصفحة
         loadTableData("mainTable1");
         loadTableData("mainTable2");
         updateHeaderDate();

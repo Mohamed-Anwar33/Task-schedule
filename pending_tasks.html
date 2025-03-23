@@ -91,7 +91,8 @@
       }
       .edit-btn,
       .important-btn,
-      .move-btn {
+      .move-btn,
+      .delete-btn {
         margin: 2px;
         padding: 4px 8px;
         font-size: 12px;
@@ -169,7 +170,8 @@
         }
         .edit-btn,
         .important-btn,
-        .move-btn {
+        .move-btn,
+        .delete-btn {
           padding: 2px 4px;
           font-size: 9px;
           min-width: 45px;
@@ -342,6 +344,7 @@
             isImportant ? "إلغاء الأهمية" : "تحديد اللون"
           }</button>
                 <button class="btn btn-primary btn-sm move-btn" onclick="moveToMainTable(${index})">نقل إلى الجدول الأول</button>
+                <button class="btn btn-danger btn-sm delete-btn" onclick="deletePendingTask(${index})">حذف</button>
               </div>
             </td>
           `;
@@ -420,6 +423,9 @@
               <button class="btn btn-primary btn-sm move-btn" onclick="moveToMainTable(${
                 table.rows.length - 1
               })">نقل إلى الجدول الأول</button>
+              <button class="btn btn-danger btn-sm delete-btn" onclick="deletePendingTask(${
+                table.rows.length - 1
+              })">حذف</button>
             </div>
           </td>
         `;
@@ -590,6 +596,16 @@
         localStorage.setItem("pending_tasks", JSON.stringify(pendingTasks));
         loadPendingTasks();
         alert("تم نقل المهمة إلى الجدول الأول بنجاح!");
+      }
+
+      function deletePendingTask(index) {
+        const pendingTasks = JSON.parse(
+          localStorage.getItem("pending_tasks") || "[]"
+        );
+        pendingTasks.splice(index, 1); // حذف المهمة من المصفوفة
+        localStorage.setItem("pending_tasks", JSON.stringify(pendingTasks));
+        loadPendingTasks(); // إعادة تحميل الجدول بعد الحذف
+        alert("تم حذف المهمة بنجاح!");
       }
 
       document.addEventListener("DOMContentLoaded", function () {
