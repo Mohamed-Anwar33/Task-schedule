@@ -13,7 +13,6 @@
       rel="stylesheet"
     />
     <style>
-      /* نفس الـ CSS الأصلي بدون تغيير */
       html,
       body {
         height: 100%;
@@ -80,11 +79,11 @@
       }
       .table th:nth-child(4),
       .table td:nth-child(4) {
-        width: 25%;
+        width: 20%;
       }
       .table th:nth-child(5),
       .table td:nth-child(5) {
-        width: 15%;
+        width: 20%;
       }
       .table th:nth-child(6),
       .table td:nth-child(6) {
@@ -92,7 +91,7 @@
       }
       .table th:nth-child(7),
       .table td:nth-child(7) {
-        width: 5%;
+        width: 15%;
       }
       .hijri-select {
         width: 45px !important;
@@ -103,7 +102,7 @@
         display: flex;
         justify-content: center;
         gap: 5px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
       }
       .edit-btn,
       .complete-btn,
@@ -114,6 +113,7 @@
         padding: 4px 8px;
         font-size: 12px;
         white-space: nowrap;
+        min-width: 50px;
       }
       .important-task-dark-red {
         background-color: #ff9999 !important;
@@ -195,6 +195,34 @@
       .print-date {
         display: none;
       }
+      #secondPageContent {
+        display: none; /* إخفاء محتوى الصفحة الثانية في العرض العادي */
+      }
+      .section {
+        margin-top: 20px;
+        text-align: center;
+      }
+      .section p {
+        margin: 5px 0;
+        font-size: 12px;
+      }
+      .title {
+        font-weight: bold;
+        text-decoration: underline;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      .greeting {
+        font-size: 14px;
+        margin: 20px 0;
+        text-align: right;
+      }
+      .subtitle {
+        font-size: 16px;
+        text-decoration: underline;
+        text-align: center;
+        margin: 20px 0;
+      }
       @media print {
         @page {
           size: A4;
@@ -204,6 +232,7 @@
           margin: 0;
           padding: 0;
           font-size: 8pt;
+          background-color: #fff;
         }
         .container {
           padding: 5mm;
@@ -233,12 +262,16 @@
         .table {
           margin-bottom: 5mm;
           font-size: 7pt;
+          background-color: #fff;
+          border-collapse: collapse;
+          width: 100%;
         }
         .table th,
         .table td {
           padding: 2mm;
           height: 6mm;
           line-height: 1;
+          border: 1px solid #000;
         }
         .table-section {
           margin-bottom: 2mm;
@@ -304,14 +337,41 @@
         .important-task-deep-purple {
           background-color: #ba68c8 !important;
         }
-        .signature-section {
-          text-align: left;
-          width: 100%;
+        #secondPageContent {
+          display: block !important; /* إظهار الصفحة الثانية عند الطباعة */
+          page-break-before: always; /* فصل الصفحة الثانية في ورقة جديدة */
         }
-        .signature-section p {
-          text-align: left;
-          margin-left: 0;
-          margin-right: auto;
+        #secondPageContent .container {
+          padding: 5mm;
+          margin: 0;
+          max-width: 100%;
+        }
+        #secondPageContent .section {
+          margin-top: 5mm;
+          text-align: center;
+        }
+        #secondPageContent .section p {
+          font-size: 8pt;
+          margin: 2mm 0;
+        }
+        #secondPageContent .title {
+          font-size: 10pt;
+          margin-bottom: 3mm;
+        }
+        #secondPageContent .greeting {
+          font-size: 10pt;
+          margin: 5mm 0;
+        }
+        #secondPageContent .subtitle {
+          font-size: 12pt;
+          margin: 5mm 0;
+        }
+        .status-column {
+          display: none !important; /* إخفاء عمود الحالة عند الطباعة */
+        }
+        .table td:nth-child(7),
+        .table th:nth-child(7) {
+          display: none !important; /* إخفاء الخلية السابعة في الصفوف أيضًا */
         }
       }
       @media (max-width: 430px) {
@@ -322,6 +382,11 @@
         .table-responsive {
           overflow-x: auto;
         }
+        .table td:nth-child(4),
+        .table td:nth-child(5),
+        .table td:nth-child(6) {
+          font-size: 12px;
+        }
         .edit-btn,
         .complete-btn,
         .delete-btn,
@@ -329,15 +394,16 @@
         .remove-color-btn {
           padding: 2px 4px;
           font-size: 9px;
-          min-width: 50px;
+          min-width: 45px;
         }
         .container {
           padding: 5px;
         }
         .action-buttons {
+          display: flex;
           flex-direction: column;
           gap: 2px;
-          justify-content: center;
+          align-items: center;
         }
         .hijri-select,
         .color-select {
@@ -350,7 +416,7 @@
         }
         .table td {
           white-space: normal;
-          line-height: 1;
+          line-height: 1.2;
         }
       }
     </style>
@@ -359,8 +425,8 @@
     <div class="container">
       <div class="text-center mt-3">
         <div class="small-text">
-          <span class="editable" id="title1">السرية الأولى</span
-          ><button
+          <span class="editable" id="title1">السرية الأولى</span>
+          <button
             class="btn btn-warning btn-sm edit-btn"
             onclick="editText('title1')"
           >
@@ -368,8 +434,8 @@
           </button>
         </div>
         <div class="small-text">
-          <span class="editable" id="title2">فصيل (1)</span
-          ><button
+          <span class="editable" id="title2">فصيل (1)</span>
+          <button
             class="btn btn-warning btn-sm edit-btn"
             onclick="editText('title2')"
           >
@@ -377,8 +443,8 @@
           </button>
         </div>
         <div class="small-text">
-          <span class="editable" id="title3">مجموعة (7)</span
-          ><button
+          <span class="editable" id="title3">مجموعة (7)</span>
+          <button
             class="btn btn-warning btn-sm edit-btn"
             onclick="editText('title3')"
           >
@@ -491,9 +557,9 @@
 
       <div class="introduction mt-5" style="font-size: 8px">
         <p class="text-center" style="font-size: 8px">
-          <span style="display: block">ص/ ضباط خفر</span
-          ><span style="display: block">ص/ رقباء السرايا</span
-          ><span style="display: block">ص/ العمليات</span>
+          <span style="display: block">ص/ ضباط خفر</span>
+          <span style="display: block">ص/ رقباء السرايا</span>
+          <span style="display: block">ص/ العمليات</span>
         </p>
         <p class="text-end" style="font-size: 8px">
           السلام عليكم ورحمة الله وبركاته، تجدون أعلاه بيان بالمهام الأسبوعية
@@ -565,12 +631,79 @@
               text-align: left;
             "
           >
-            <span style="display: block">قائد قوة المهام والواجبات الخاصة</span
-            ><span style="display: block; margin-left: 175px">عقيد /</span
-            ><span style="display: block; margin-left: 67px"
+            <span style="display: block">قائد قوة المهام والواجبات الخاصة</span>
+            <span style="display: block; margin-left: 175px">عقيد /</span>
+            <span style="display: block; margin-left: 67px"
               >فيصل بن خالد النفيسة</span
             >
           </p>
+        </div>
+      </div>
+
+      <!-- محتوى الصفحة الثانية مخفي -->
+      <div id="secondPageContent">
+        <div class="container">
+          <div class="section">
+            <p class="title">تبليغ مباشرة مهمة</p>
+            <p>قائد السريا - للمتابعة</p>
+            <p>ضابط الميدان - للمتابعة</p>
+            <p>ضابط خطر - للمتابعة</p>
+            <p>رقيب السرية - فيما يخصكم</p>
+            <p>رقيب فصل (ق) - فيما يخصكم</p>
+            <p>رقيب مجموعة (٧) - فيما يخصكم</p>
+            <p>رئيس العمليات</p>
+            <p>رقيب الحركة والآليات</p>
+          </div>
+
+          <p class="greeting">السلام عليكم ورحمة الله وبركاته</p>
+
+          <div class="section">
+            <h2 class="subtitle">عن المهمة التالية</h2>
+          </div>
+
+          <h2 class="title">الجدول الثالث - المهام المكتملة</h2>
+          <h4 class="header fs-6">
+            بيان بالمهام المكتملة ليوم
+            <span id="second-selected-date"></span>
+            <span id="second-print-selected-date" class="print-date"></span>
+          </h4>
+          <div class="table-responsive table-section">
+            <table
+              class="table table-bordered table-striped text-center align-middle"
+              id="completedTable"
+            >
+              <thead class="table-dark">
+                <tr>
+                  <th>التسلسل</th>
+                  <th>اليوم والتاريخ</th>
+                  <th>المباشرة بالموقع</th>
+                  <th>نوع المهمة</th>
+                  <th>الموقع</th>
+                  <th>المطلوب</th>
+                  <th class="status-column">الحالة</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="signature-section mt-5">
+            <p
+              style="
+                font-size: 16px;
+                font-family: 'Tajawal', sans-serif;
+                line-height: 1.8;
+                text-align: left;
+              "
+            >
+              <span style="display: block"
+                >قائد قوة المهام والواجبات الخاصة</span
+              >
+              <span style="display: block; margin-left: 175px">عقيد /</span>
+              <span style="display: block; margin-left: 67px"
+                >فيصل بن خالد النفيسة</span
+              >
+            </p>
+          </div>
         </div>
       </div>
 
@@ -728,6 +861,12 @@
         hijriDay = parseInt(document.getElementById("header-day").value);
         hijriMonth = parseInt(document.getElementById("header-month").value);
         hijriYear = parseInt(document.getElementById("header-year").value);
+
+        localStorage.setItem("weekDay", weekDay);
+        localStorage.setItem("hijriDay", hijriDay);
+        localStorage.setItem("hijriMonth", hijriMonth);
+        localStorage.setItem("hijriYear", hijriYear);
+
         const selectedDate = `${weekDay} ${hijriDay} ${
           hijriMonths[hijriMonth - 1]
         } ${hijriYear}`;
@@ -736,6 +875,12 @@
         }، ${hijriYear} هـ`;
         document.getElementById("selected-date").innerText = selectedDate;
         document.getElementById("print-selected-date").innerText = printDate;
+
+        document.getElementById("second-selected-date").innerText =
+          selectedDate;
+        document.getElementById("second-print-selected-date").innerText =
+          printDate;
+
         updateAllTables();
         saveTableData("mainTable1");
         saveTableData("mainTable2");
@@ -817,7 +962,7 @@
           <td contenteditable="true"></td>
           <td class="edit-column">
             <div class="action-buttons">
-              <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}')">تعديل</button>
+              <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}', this)">تعديل</button>
               <button class="btn btn-success btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">اكتمال</button>
               <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
               <button class="btn btn-danger btn-sm important-btn" onclick="showColorPicker(this, '${tableId}')">تحديد اللون</button>
@@ -828,59 +973,35 @@
         saveTableData(tableId);
         sortTableByStartTime(tableId);
         updatePendingTasks();
+        if (tableId === "mainTable1") {
+          localStorage.setItem(
+            "completedTable_tasks",
+            localStorage.getItem("mainTable1_tasks")
+          );
+        }
       }
 
       function toggleComplete(button, tableId) {
         const row = button.closest("tr");
-        const isCompleted = button.innerText === "إلغاء الاكتمال";
-        const cells = row.getElementsByTagName("td");
-        const offset = tableId === "mainTable1" ? 1 : 0;
-        const weekDay = cells[0 + offset].querySelector(
-          "select[name='week-day']"
-        ).value;
-        const day = cells[0 + offset].querySelector(
-          "select[name='hijri-day']"
-        ).value;
-        const month = cells[0 + offset].querySelector(
-          "select[name='hijri-month']"
-        ).value;
-        const year = cells[0 + offset].querySelector(
-          "select[name='hijri-year']"
-        ).value;
-        const taskData = [
-          `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
-          cells[1 + offset].innerText,
-          cells[2 + offset].innerText,
-          cells[3 + offset].innerText,
-          cells[4 + offset].innerText,
-          isCompleted,
-          importantColors.some((color) =>
-            cells[1 + offset].classList.contains(color)
-          ),
-          importantColors.find((color) =>
-            cells[1 + offset].classList.contains(color)
-          ) || "",
-        ];
-        let tasks = JSON.parse(
-          localStorage.getItem(tableId + "_tasks") || "[]"
-        );
-        const taskIndex = tasks.findIndex(
-          (task) => task[0] === taskData[0] && task[1] === taskData[1]
-        );
-        if (taskIndex !== -1) {
-          tasks[taskIndex][5] = !isCompleted;
-          localStorage.setItem(tableId + "_tasks", JSON.stringify(tasks));
-        }
-        button.innerText = isCompleted ? "اكتمال" : "إلغاء الاكتمال";
+        const completeBtn = row.querySelector(".complete-btn");
+        const isCompleted = completeBtn.innerText === "إلغاء الاكتمال";
+        completeBtn.innerText = isCompleted ? "اكتمال" : "إلغاء الاكتمال";
+        completeBtn.classList.toggle("btn-success", !isCompleted);
+        completeBtn.classList.toggle("btn-warning", isCompleted);
+        saveTableData(tableId);
         updatePendingTasks();
-        loadTableData(tableId);
-        sortTableByStartTime(tableId);
+        if (tableId === "mainTable1") {
+          localStorage.setItem(
+            "completedTable_tasks",
+            localStorage.getItem("mainTable1_tasks")
+          );
+        }
       }
 
       function showColorPicker(button, tableId) {
         const row = button.closest("tr");
         const actionButtons = row.querySelector(".action-buttons");
-        const existingPicker = actionButtons.querySelector(".color-picker");
+        const existingPicker = row.querySelector(".color-picker");
         if (existingPicker) {
           existingPicker.remove();
           return;
@@ -917,48 +1038,22 @@
           startIndex,
           -1
         );
-        const cells = row.getElementsByTagName("td");
-        const offset = tableId === "mainTable1" ? 1 : 0;
-        const weekDay = cells[0 + offset].querySelector(
-          "select[name='week-day']"
-        ).value;
-        const day = cells[0 + offset].querySelector(
-          "select[name='hijri-day']"
-        ).value;
-        const month = cells[0 + offset].querySelector(
-          "select[name='hijri-month']"
-        ).value;
-        const year = cells[0 + offset].querySelector(
-          "select[name='hijri-year']"
-        ).value;
-        const taskData = [
-          `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
-          cells[1 + offset].innerText,
-          cells[2 + offset].innerText,
-          cells[3 + offset].innerText,
-          cells[4 + offset].innerText,
-        ];
         if (color) {
           dataCells.forEach((cell) => {
             importantColors.forEach((c) => cell.classList.remove(c));
             cell.classList.add(color);
           });
           button.innerText = "إلغاء الأهمية";
-          let tasks = JSON.parse(
-            localStorage.getItem(tableId + "_tasks") || "[]"
-          );
-          const taskIndex = tasks.findIndex(
-            (task) => task[0] === taskData[0] && task[1] === taskData[1]
-          );
-          if (taskIndex !== -1) {
-            tasks[taskIndex][6] = true;
-            tasks[taskIndex][7] = color;
-            localStorage.setItem(tableId + "_tasks", JSON.stringify(tasks));
-          }
         }
         select.parentElement.remove();
+        saveTableData(tableId);
         updatePendingTasks();
-        loadTableData(tableId);
+        if (tableId === "mainTable1") {
+          localStorage.setItem(
+            "completedTable_tasks",
+            localStorage.getItem("mainTable1_tasks")
+          );
+        }
       }
 
       function removeColor(button, tableId) {
@@ -969,124 +1064,63 @@
           -1
         );
         const importantButton = row.querySelector(".important-btn");
-        const cells = row.getElementsByTagName("td");
-        const offset = tableId === "mainTable1" ? 1 : 0;
-        const weekDay = cells[0 + offset].querySelector(
-          "select[name='week-day']"
-        ).value;
-        const day = cells[0 + offset].querySelector(
-          "select[name='hijri-day']"
-        ).value;
-        const month = cells[0 + offset].querySelector(
-          "select[name='hijri-month']"
-        ).value;
-        const year = cells[0 + offset].querySelector(
-          "select[name='hijri-year']"
-        ).value;
-        const taskData = [
-          `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
-          cells[1 + offset].innerText,
-          cells[2 + offset].innerText,
-          cells[3 + offset].innerText,
-          cells[4 + offset].innerText,
-        ];
         dataCells.forEach((cell) =>
           importantColors.forEach((c) => cell.classList.remove(c))
         );
         importantButton.innerText = "تحديد اللون";
-        let tasks = JSON.parse(
-          localStorage.getItem(tableId + "_tasks") || "[]"
-        );
-        const taskIndex = tasks.findIndex(
-          (task) => task[0] === taskData[0] && task[1] === taskData[1]
-        );
-        if (taskIndex !== -1) {
-          tasks[taskIndex][6] = false;
-          tasks[taskIndex][7] = "";
-          localStorage.setItem(tableId + "_tasks", JSON.stringify(tasks));
-        }
+        saveTableData(tableId);
         updatePendingTasks();
-        loadTableData(tableId);
-      }
-
-      function editTable(tableId) {
-        const table = document
-          .getElementById(tableId)
-          .getElementsByTagName("tbody")[0];
-        const rows = table.getElementsByTagName("tr");
-        for (let row of rows) {
-          const cells = row.getElementsByTagName("td");
-          const offset = tableId === "mainTable1" ? 1 : 0;
-          cells[1 + offset].contentEditable = "true";
-          cells[2 + offset].contentEditable = "true";
-          cells[3 + offset].contentEditable = "true";
-          cells[4 + offset].contentEditable = "true";
-          const editButton = row.querySelector(".edit-btn");
-          editButton.innerText = "حفظ";
-          editButton.className = "btn btn-success btn-sm edit-btn";
-          editButton.onclick = function () {
-            saveTable(tableId);
-          };
+        if (tableId === "mainTable1") {
+          localStorage.setItem(
+            "completedTable_tasks",
+            localStorage.getItem("mainTable1_tasks")
+          );
         }
       }
 
-      function saveTable(tableId) {
-        const table = document
-          .getElementById(tableId)
-          .getElementsByTagName("tbody")[0];
-        const rows = table.getElementsByTagName("tr");
-        for (let row of rows) {
-          const cells = row.getElementsByTagName("td");
-          const offset = tableId === "mainTable1" ? 1 : 0;
+      function editTable(tableId, button) {
+        const row = button.closest("tr");
+        const cells = row.getElementsByTagName("td");
+        const offset = tableId === "mainTable1" ? 1 : 0;
+        const isEditing = cells[1 + offset].contentEditable === "true";
+        if (isEditing) {
           cells[1 + offset].contentEditable = "false";
           cells[2 + offset].contentEditable = "false";
           cells[3 + offset].contentEditable = "false";
           cells[4 + offset].contentEditable = "false";
-          const editButton = row.querySelector(".edit-btn");
-          editButton.innerText = "تعديل";
-          editButton.className = "btn btn-warning btn-sm edit-btn";
-          editButton.onclick = function () {
-            editTable(tableId);
-          };
+          button.innerText = "تعديل";
+          button.className = "btn btn-warning btn-sm edit-btn";
+          saveTableData(tableId);
+          sortTableByStartTime(tableId);
+          updatePendingTasks();
+          if (tableId === "mainTable1") {
+            localStorage.setItem(
+              "completedTable_tasks",
+              localStorage.getItem("mainTable1_tasks")
+            );
+          }
+        } else {
+          cells[1 + offset].contentEditable = "true";
+          cells[2 + offset].contentEditable = "true";
+          cells[3 + offset].contentEditable = "true";
+          cells[4 + offset].contentEditable = "true";
+          button.innerText = "حفظ";
+          button.className = "btn btn-success btn-sm edit-btn";
         }
-        saveTableData(tableId);
-        sortTableByStartTime(tableId);
-        updatePendingTasks();
       }
 
       function deleteTask(button, tableId) {
         const row = button.closest("tr");
-        const cells = row.getElementsByTagName("td");
-        const offset = tableId === "mainTable1" ? 1 : 0;
-        const weekDay = cells[0 + offset].querySelector(
-          "select[name='week-day']"
-        ).value;
-        const day = cells[0 + offset].querySelector(
-          "select[name='hijri-day']"
-        ).value;
-        const month = cells[0 + offset].querySelector(
-          "select[name='hijri-month']"
-        ).value;
-        const year = cells[0 + offset].querySelector(
-          "select[name='hijri-year']"
-        ).value;
-        const taskData = [
-          `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
-          cells[1 + offset].innerText,
-          cells[2 + offset].innerText,
-          cells[3 + offset].innerText,
-          cells[4 + offset].innerText,
-        ];
-        let tasks = JSON.parse(
-          localStorage.getItem(tableId + "_tasks") || "[]"
-        );
-        tasks = tasks.filter(
-          (task) => task[0] !== taskData[0] || task[1] !== taskData[1]
-        );
-        localStorage.setItem(tableId + "_tasks", JSON.stringify(tasks));
         row.remove();
+        saveTableData(tableId);
         sortTableByStartTime(tableId);
         updatePendingTasks();
+        if (tableId === "mainTable1") {
+          localStorage.setItem(
+            "completedTable_tasks",
+            localStorage.getItem("mainTable1_tasks")
+          );
+        }
       }
 
       function saveTableData(tableId) {
@@ -1110,9 +1144,9 @@
           const year = cells[0 + offset].querySelector(
             "select[name='hijri-year']"
           ).value;
-          const isCompleted =
-            cells[0 + offset].parentElement.querySelector(".complete-btn")
-              .innerText === "إلغاء الاكتمال";
+          const isCompleted = row.querySelector(".complete-btn")
+            ? row.querySelector(".complete-btn").innerText === "إلغاء الاكتمال"
+            : false;
           const isImportant = importantColors.some((color) =>
             cells[1 + offset].classList.contains(color)
           );
@@ -1124,7 +1158,7 @@
             hijriMonths[month - 1]
           }، ${year} هـ`;
           cells[0 + offset].querySelector(".print-date").innerText = dateText;
-          data.push([
+          const taskData = [
             `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
             cells[1 + offset].innerText,
             cells[2 + offset].innerText,
@@ -1133,10 +1167,10 @@
             isCompleted,
             isImportant,
             importantColor,
-          ]);
+          ];
+          data.push(taskData);
         }
         localStorage.setItem(tableId + "_tasks", JSON.stringify(data));
-        console.log(`Saved data for ${tableId}:`, data); // تتبع الحفظ
       }
 
       function loadTableData(tableId) {
@@ -1144,7 +1178,6 @@
           .getElementById(tableId)
           .getElementsByTagName("tbody")[0];
         const savedData = localStorage.getItem(tableId + "_tasks");
-        console.log(`Loading data for ${tableId}:`, savedData); // تتبع التحميل
         table.innerHTML = "";
         if (savedData) {
           const tasks = JSON.parse(savedData);
@@ -1207,8 +1240,10 @@
               <td contenteditable="false">${rowData[4]}</td>
               <td class="edit-column">
                 <div class="action-buttons">
-                  <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}')">تعديل</button>
-                  <button class="btn btn-success btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">${
+                  <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}', this)">تعديل</button>
+                  <button class="btn ${
+                    isCompleted ? "btn-warning" : "btn-success"
+                  } btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">${
               isCompleted ? "إلغاء الاكتمال" : "اكتمال"
             }</button>
                   <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
@@ -1302,6 +1337,19 @@
       }
 
       function printTable(tableId) {
+        const thirdTable = document.querySelector("#completedTable tbody");
+        thirdTable.innerHTML =
+          document.querySelector("#mainTable1 tbody").innerHTML;
+        const rows = thirdTable.getElementsByTagName("tr");
+        Array.from(rows).forEach((row, index) => {
+          row.cells[0].innerText = index + 1;
+          const editColumn = row.cells[row.cells.length - 1];
+          const isCompleted =
+            editColumn.querySelector(".complete-btn")?.innerText ===
+            "إلغاء الاكتمال";
+          editColumn.innerHTML = isCompleted ? "مكتمل" : "غير مكتمل";
+        });
+
         window.print();
       }
 
@@ -1312,9 +1360,7 @@
         const button = element.nextElementSibling;
         button.innerText = "حفظ";
         button.className = "btn btn-success btn-sm edit-btn";
-        button.onclick = function () {
-          saveText(elementId);
-        };
+        button.onclick = () => saveText(elementId);
       }
 
       function saveText(elementId) {
@@ -1324,13 +1370,16 @@
         const button = element.nextElementSibling;
         button.innerText = "تعديل";
         button.className = "btn btn-warning btn-sm edit-btn";
-        button.onclick = function () {
-          editText(elementId);
-        };
+        button.onclick = () => editText(elementId);
         localStorage.setItem(elementId, input.value);
       }
 
-      document.addEventListener("DOMContentLoaded", function () {
+      document.addEventListener("DOMContentLoaded", () => {
+        weekDay = localStorage.getItem("weekDay") || "السبت";
+        hijriDay = parseInt(localStorage.getItem("hijriDay")) || 5;
+        hijriMonth = parseInt(localStorage.getItem("hijriMonth")) || 8;
+        hijriYear = parseInt(localStorage.getItem("hijriYear")) || 1444;
+
         populateDateSelects();
         loadTableData("mainTable1");
         loadTableData("mainTable2");

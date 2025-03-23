@@ -485,24 +485,12 @@
               <th>نوع المهمة</th>
               <th>الموقع</th>
               <th>المطلوب</th>
-              <th class="edit-column">تعديل</th>
+              <th class="edit-column">الحالة</th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
         <div class="table-buttons mt-3">
-          <button
-            class="btn btn-success btn-sm"
-            onclick="addNewRow('completedTable')"
-          >
-            إضافة صف
-          </button>
-          <button
-            class="btn btn-warning btn-sm edit-section-btn"
-            onclick="editTable('completedTable')"
-          >
-            تعديل
-          </button>
           <button
             class="btn btn-primary btn-sm print-btn"
             onclick="printTable('completedTable')"
@@ -512,7 +500,6 @@
         </div>
       </div>
 
-      <!-- إضافة قسم التوقيع هنا -->
       <div class="signature-section">
         <p
           id="signatureName"
@@ -688,6 +675,13 @@
         hijriDay = parseInt(document.getElementById("header-day").value);
         hijriMonth = parseInt(document.getElementById("header-month").value);
         hijriYear = parseInt(document.getElementById("header-year").value);
+
+        // حفظ القيم في localStorage
+        localStorage.setItem("weekDay", weekDay);
+        localStorage.setItem("hijriDay", hijriDay);
+        localStorage.setItem("hijriMonth", hijriMonth);
+        localStorage.setItem("hijriYear", hijriYear);
+
         const selectedDate = `${weekDay} ${hijriDay} ${
           hijriMonths[hijriMonth - 1]
         } ${hijriYear}`;
@@ -697,7 +691,6 @@
         document.getElementById("selected-date").innerText = selectedDate;
         document.getElementById("print-selected-date").innerText = printDate;
         updateAllTables();
-        saveTableData("completedTable");
       }
 
       function sortTableByStartTime(tableId) {
@@ -717,469 +710,91 @@
         });
       }
 
-      function addNewRow(tableId) {
-        const table = document
-          .getElementById(tableId)
-          .getElementsByTagName("tbody")[0];
-        const newRow = table.insertRow();
-        const rowIndex = table.rows.length;
-        const dateText = `${weekDay} ${hijriDay} ${
-          hijriMonths[hijriMonth - 1]
-        }، ${hijriYear} هـ`;
-        newRow.innerHTML = `
-          <td>${rowIndex}</td>
-          <td class="date-cell">
-            <select class="hijri-select" name="week-day">${weekDays
-              .map(
-                (day) =>
-                  `<option value="${day}" ${
-                    day === weekDay ? "selected" : ""
-                  }>${day}</option>`
-              )
-              .join("")}</select>
-            <select class="hijri-select" name="hijri-day">${Array.from(
-              { length: 30 },
-              (_, i) => i + 1
-            )
-              .map(
-                (day) =>
-                  `<option value="${day}" ${
-                    day === hijriDay ? "selected" : ""
-                  }>${day}</option>`
-              )
-              .join("")}</select>
-            <select class="hijri-select" name="hijri-month">${hijriMonths
-              .map(
-                (m, i) =>
-                  `<option value="${i + 1}" ${
-                    i + 1 === hijriMonth ? "selected" : ""
-                  }>${m}</option>`
-              )
-              .join("")}</select>
-            <select class="hijri-select" name="hijri-year">${Array.from(
-              { length: 41 },
-              (_, i) => 1430 + i
-            )
-              .map(
-                (year) =>
-                  `<option value="${year}" ${
-                    year === hijriYear ? "selected" : ""
-                  }>${year}</option>`
-              )
-              .join("")}</select>
-            <span class="print-date">${dateText}</span>
-          </td>
-          <td contenteditable="true">06:00</td>
-          <td contenteditable="true"></td>
-          <td contenteditable="true"></td>
-          <td contenteditable="true"></td>
-          <td class="edit-column">
-            <div class="action-buttons">
-              <button class="btn btn-success btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">اكتمال</button>
-              <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
-              <button class="btn btn-danger btn-sm important-btn" onclick="showColorPicker(this, '${tableId}')">تحديد اللون</button>
-              <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
-            </div>
-          </td>
-        `;
-        let mainTable1Tasks = JSON.parse(
-          localStorage.getItem("mainTable1_tasks") || "[]"
-        );
-        mainTable1Tasks.push([dateText, "06:00", "", "", "", false, false, ""]);
-        localStorage.setItem(
-          "mainTable1_tasks",
-          JSON.stringify(mainTable1Tasks)
-        );
-        loadTableData(tableId);
-        sortTableByStartTime(tableId);
-      }
-
-      function toggleComplete(button, tableId) {
-        const row = button.closest("tr");
-        const isCompleted = button.innerText === "إلغاء الاكتمال";
-        const cells = row.getElementsByTagName("td");
-        const weekDay = cells[1].querySelector("select[name='week-day']").value;
-        const day = cells[1].querySelector("select[name='hijri-day']").value;
-        const month = cells[1].querySelector(
-          "select[name='hijri-month']"
-        ).value;
-        const year = cells[1].querySelector("select[name='hijri-year']").value;
-        const taskData = [
-          `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
-          cells[2].innerText,
-          cells[3].innerText,
-          cells[4].innerText,
-          cells[5].innerText,
-          isCompleted,
-          importantColors.some((color) => cells[2].classList.contains(color)),
-          importantColors.find((color) => cells[2].classList.contains(color)) ||
-            "",
-        ];
-        let mainTable1Tasks = JSON.parse(
-          localStorage.getItem("mainTable1_tasks") || "[]"
-        );
-        const taskIndex = mainTable1Tasks.findIndex(
-          (task) => task[0] === taskData[0] && task[1] === taskData[1]
-        );
-        if (taskIndex !== -1) {
-          mainTable1Tasks[taskIndex][5] = !isCompleted;
-          localStorage.setItem(
-            "mainTable1_tasks",
-            JSON.stringify(mainTable1Tasks)
-          );
-        }
-        button.innerText = isCompleted ? "اكتمال" : "إلغاء الاكتمال";
-        loadTableData(tableId);
-        sortTableByStartTime(tableId);
-      }
-
-      function showColorPicker(button, tableId) {
-        const row = button.closest("tr");
-        const actionButtons = row.querySelector(".action-buttons");
-        const existingPicker = actionButtons.querySelector(".color-picker");
-        if (existingPicker) {
-          existingPicker.remove();
-          return;
-        }
-        const colorNames = [
-          "أحمر داكن",
-          "أرجواني فاتح",
-          "أخضر داكن",
-          "أزرق داكن",
-          "بني فاتح",
-          "أحمر غامق",
-          "أزرق غامق",
-          "أخضر غامق",
-          "برتقالي غامق",
-          "بنفسجي غامق",
-        ];
-        const colorPicker = document.createElement("div");
-        colorPicker.className = "color-picker";
-        colorPicker.innerHTML = `<select class="color-select" onchange="applyColor(this, '${tableId}')"><option value="" disabled selected>اختر لونًا</option>${importantColors
-          .map(
-            (color, index) =>
-              `<option value="${color}">${colorNames[index]}</option>`
-          )
-          .join("")}</select>`;
-        actionButtons.appendChild(colorPicker);
-      }
-
-      function applyColor(select, tableId) {
-        const row = select.closest("tr");
-        const color = select.value;
-        const button = row.querySelector(".important-btn");
-        const dataCells = Array.from(row.querySelectorAll("td")).slice(1, -1);
-        const cells = row.getElementsByTagName("td");
-        const weekDay = cells[1].querySelector("select[name='week-day']").value;
-        const day = cells[1].querySelector("select[name='hijri-day']").value;
-        const month = cells[1].querySelector(
-          "select[name='hijri-month']"
-        ).value;
-        const year = cells[1].querySelector("select[name='hijri-year']").value;
-        const taskData = [
-          `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
-          cells[2].innerText,
-          cells[3].innerText,
-          cells[4].innerText,
-          cells[5].innerText,
-        ];
-        if (color) {
-          dataCells.forEach((cell) => {
-            importantColors.forEach((c) => cell.classList.remove(c));
-            cell.classList.add(color);
-          });
-          button.innerText = "إلغاء الأهمية";
-          let mainTable1Tasks = JSON.parse(
-            localStorage.getItem("mainTable1_tasks") || "[]"
-          );
-          const taskIndex = mainTable1Tasks.findIndex(
-            (task) => task[0] === taskData[0] && task[1] === taskData[1]
-          );
-          if (taskIndex !== -1) {
-            mainTable1Tasks[taskIndex][6] = true;
-            mainTable1Tasks[taskIndex][7] = color;
-          } else {
-            mainTable1Tasks.push([...taskData, false, true, color]);
-          }
-          localStorage.setItem(
-            "mainTable1_tasks",
-            JSON.stringify(mainTable1Tasks)
-          );
-        }
-        select.parentElement.remove();
-        saveTableData(tableId);
-      }
-
-      function removeColor(button, tableId) {
-        const row = button.closest("tr");
-        const dataCells = Array.from(row.querySelectorAll("td")).slice(1, -1);
-        const importantButton = row.querySelector(".important-btn");
-        const cells = row.getElementsByTagName("td");
-        const weekDay = cells[1].querySelector("select[name='week-day']").value;
-        const day = cells[1].querySelector("select[name='hijri-day']").value;
-        const month = cells[1].querySelector(
-          "select[name='hijri-month']"
-        ).value;
-        const year = cells[1].querySelector("select[name='hijri-year']").value;
-        const taskData = [
-          `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
-          cells[2].innerText,
-          cells[3].innerText,
-          cells[4].innerText,
-          cells[5].innerText,
-        ];
-        dataCells.forEach((cell) =>
-          importantColors.forEach((c) => cell.classList.remove(c))
-        );
-        importantButton.innerText = "تحديد اللون";
-        let mainTable1Tasks = JSON.parse(
-          localStorage.getItem("mainTable1_tasks") || "[]"
-        );
-        const taskIndex = mainTable1Tasks.findIndex(
-          (task) => task[0] === taskData[0] && task[1] === taskData[1]
-        );
-        if (taskIndex !== -1) {
-          mainTable1Tasks[taskIndex][6] = false;
-          mainTable1Tasks[taskIndex][7] = "";
-          localStorage.setItem(
-            "mainTable1_tasks",
-            JSON.stringify(mainTable1Tasks)
-          );
-        }
-        saveTableData(tableId);
-      }
-
-      function editTable(tableId) {
-        const table = document
-          .getElementById(tableId)
-          .getElementsByTagName("tbody")[0];
-        const rows = table.getElementsByTagName("tr");
-        for (let row of rows) {
-          const cells = row.getElementsByTagName("td");
-          cells[2].contentEditable = "true";
-          cells[3].contentEditable = "true";
-          cells[4].contentEditable = "true";
-          cells[5].contentEditable = "true";
-          const actionButtons = row.querySelector(".action-buttons");
-          if (!actionButtons.querySelector(".edit-btn")) {
-            const editButton = document.createElement("button");
-            editButton.className = "btn btn-success btn-sm edit-btn";
-            editButton.innerText = "حفظ";
-            editButton.onclick = function () {
-              saveTable(tableId);
-            };
-            actionButtons.insertBefore(editButton, actionButtons.firstChild);
-          }
-        }
-      }
-
-      function saveTable(tableId) {
-        const table = document
-          .getElementById(tableId)
-          .getElementsByTagName("tbody")[0];
-        const rows = table.getElementsByTagName("tr");
-        for (let row of rows) {
-          const cells = row.getElementsByTagName("td");
-          cells[2].contentEditable = "false";
-          cells[3].contentEditable = "false";
-          cells[4].contentEditable = "false";
-          cells[5].contentEditable = "false";
-          const editButton = row.querySelector(".edit-btn");
-          if (editButton) editButton.remove();
-        }
-        saveTableData(tableId);
-        sortTableByStartTime(tableId);
-      }
-
-      function deleteTask(button, tableId) {
-        const row = button.closest("tr");
-        const cells = row.getElementsByTagName("td");
-        const weekDay = cells[1].querySelector("select[name='week-day']").value;
-        const day = cells[1].querySelector("select[name='hijri-day']").value;
-        const month = cells[1].querySelector(
-          "select[name='hijri-month']"
-        ).value;
-        const year = cells[1].querySelector("select[name='hijri-year']").value;
-        const taskData = [
-          `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
-          cells[2].innerText,
-          cells[3].innerText,
-          cells[4].innerText,
-          cells[5].innerText,
-        ];
-        let mainTable1Tasks = JSON.parse(
-          localStorage.getItem("mainTable1_tasks") || "[]"
-        );
-        mainTable1Tasks = mainTable1Tasks.filter(
-          (task) => task[0] !== taskData[0] || task[1] !== taskData[1]
-        );
-        localStorage.setItem(
-          "mainTable1_tasks",
-          JSON.stringify(mainTable1Tasks)
-        );
-        row.remove();
-        sortTableByStartTime(tableId);
-      }
-
-      function saveTableData(tableId) {
-        const table = document
-          .getElementById(tableId)
-          .getElementsByTagName("tbody")[0];
-        const rows = table.getElementsByTagName("tr");
-        let mainTable1Tasks = JSON.parse(
-          localStorage.getItem("mainTable1_tasks") || "[]"
-        );
-        for (let row of rows) {
-          const cells = row.getElementsByTagName("td");
-          const weekDay = cells[1].querySelector(
-            "select[name='week-day']"
-          ).value;
-          const day = cells[1].querySelector("select[name='hijri-day']").value;
-          const month = cells[1].querySelector(
-            "select[name='hijri-month']"
-          ).value;
-          const year = cells[1].querySelector(
-            "select[name='hijri-year']"
-          ).value;
-          const isCompleted =
-            cells[6].querySelector(".complete-btn").innerText ===
-            "إلغاء الاكتمال";
-          const isImportant = importantColors.some((color) =>
-            cells[2].classList.contains(color)
-          );
-          const importantColor =
-            importantColors.find((color) =>
-              cells[2].classList.contains(color)
-            ) || "";
-          const dateText = `${weekDay} ${day} ${
-            hijriMonths[month - 1]
-          }، ${year} هـ`;
-          cells[1].querySelector(".print-date").innerText = dateText;
-          const taskData = [
-            dateText,
-            cells[2].innerText,
-            cells[3].innerText,
-            cells[4].innerText,
-            cells[5].innerText,
-            isCompleted,
-            isImportant,
-            importantColor,
-          ];
-          const taskIndex = mainTable1Tasks.findIndex(
-            (task) => task[0] === taskData[0] && task[1] === taskData[1]
-          );
-          if (taskIndex !== -1) {
-            mainTable1Tasks[taskIndex] = taskData;
-          } else {
-            mainTable1Tasks.push(taskData);
-          }
-        }
-        localStorage.setItem(
-          "mainTable1_tasks",
-          JSON.stringify(mainTable1Tasks)
-        );
-        console.log(
-          "Saved data for mainTable1_tasks from completedTable:",
-          mainTable1Tasks
-        );
-        loadTableData(tableId);
-      }
-
       function loadTableData(tableId) {
         const table = document
           .getElementById(tableId)
           .getElementsByTagName("tbody")[0];
-        const savedData = localStorage.getItem("mainTable1_tasks");
+        const savedData = localStorage.getItem(tableId + "_tasks");
         console.log(`Loading data for ${tableId}:`, savedData);
         table.innerHTML = "";
         if (savedData) {
           const tasks = JSON.parse(savedData);
           tasks.forEach((rowData, index) => {
-            if (!rowData[5]) {
-              const [weekDay, day, monthName, year] = rowData[0].split(" ");
-              const month = hijriMonths.indexOf(monthName) + 1;
-              const isCompleted = rowData[5];
-              const isImportant = rowData[6] || false;
-              const importantColor = rowData[7] || "";
-              const dateText = `${weekDay} ${day} ${
-                hijriMonths[month - 1]
-              }، ${year} هـ`;
-              const row = table.insertRow();
-              row.innerHTML = `
-                <td>${index + 1}</td>
-                <td class="date-cell">
-                  <select class="hijri-select" name="week-day">${weekDays
-                    .map(
-                      (d) =>
-                        `<option value="${d}" ${
-                          d === weekDay ? "selected" : ""
-                        }>${d}</option>`
-                    )
-                    .join("")}</select>
-                  <select class="hijri-select" name="hijri-day">${Array.from(
-                    { length: 30 },
-                    (_, i) => i + 1
+            const [weekDay, day, monthName, year] = rowData[0].split(" ");
+            const month = hijriMonths.indexOf(monthName) + 1;
+            const isCompleted = rowData[5];
+            const isImportant = rowData[6] || false;
+            const importantColor = rowData[7] || "";
+            const dateText = `${weekDay} ${day} ${
+              hijriMonths[month - 1]
+            }، ${year} هـ`;
+            const row = table.insertRow();
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td class="date-cell">
+                <select class="hijri-select" name="week-day">${weekDays
+                  .map(
+                    (d) =>
+                      `<option value="${d}" ${
+                        d === weekDay ? "selected" : ""
+                      }>${d}</option>`
                   )
-                    .map(
-                      (d) =>
-                        `<option value="${d}" ${
-                          d === parseInt(day) ? "selected" : ""
-                        }>${d}</option>`
-                    )
-                    .join("")}</select>
-                  <select class="hijri-select" name="hijri-month">${hijriMonths
-                    .map(
-                      (m, i) =>
-                        `<option value="${i + 1}" ${
-                          i + 1 === parseInt(month) ? "selected" : ""
-                        }>${m}</option>`
-                    )
-                    .join("")}</select>
-                  <select class="hijri-select" name="hijri-year">${Array.from(
-                    { length: 41 },
-                    (_, i) => 1430 + i
+                  .join("")}</select>
+                <select class="hijri-select" name="hijri-day">${Array.from(
+                  { length: 30 },
+                  (_, i) => i + 1
+                )
+                  .map(
+                    (d) =>
+                      `<option value="${d}" ${
+                        d === parseInt(day) ? "selected" : ""
+                      }>${d}</option>`
                   )
-                    .map(
-                      (y) =>
-                        `<option value="${y}" ${
-                          y === parseInt(year) ? "selected" : ""
-                        }>${y}</option>`
-                    )
-                    .join("")}</select>
-                  <span class="print-date">${dateText}</span>
-                </td>
-                <td contenteditable="false">${rowData[1]}</td>
-                <td contenteditable="false">${rowData[2]}</td>
-                <td contenteditable="false">${rowData[3]}</td>
-                <td contenteditable="false">${rowData[4]}</td>
-                <td class="edit-column">
-                  <div class="action-buttons">
-                    <button class="btn btn-success btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">${
-                isCompleted ? "إلغاء الاكتمال" : "اكتمال"
-              }</button>
-                    <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
-                    <button class="btn btn-danger btn-sm important-btn" onclick="showColorPicker(this, '${tableId}')">${
-                isImportant ? "إلغاء الأهمية" : "تحديد اللون"
-              }</button>
-                    <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
-                  </div>
-                </td>
-              `;
-              const dataCells = Array.from(row.querySelectorAll("td")).slice(
-                1,
-                -1
-              );
-              if (isImportant && importantColor)
-                dataCells.forEach((cell) => cell.classList.add(importantColor));
-            }
+                  .join("")}</select>
+                <select class="hijri-select" name="hijri-month">${hijriMonths
+                  .map(
+                    (m, i) =>
+                      `<option value="${i + 1}" ${
+                        i + 1 === parseInt(month) ? "selected" : ""
+                      }>${m}</option>`
+                  )
+                  .join("")}</select>
+                <select class="hijri-select" name="hijri-year">${Array.from(
+                  { length: 41 },
+                  (_, i) => 1430 + i
+                )
+                  .map(
+                    (y) =>
+                      `<option value="${y}" ${
+                        y === parseInt(year) ? "selected" : ""
+                      }>${y}</option>`
+                  )
+                  .join("")}</select>
+                <span class="print-date">${dateText}</span>
+              </td>
+              <td contenteditable="false">${rowData[1]}</td>
+              <td contenteditable="false">${rowData[2]}</td>
+              <td contenteditable="false">${rowData[3]}</td>
+              <td contenteditable="false">${rowData[4]}</td>
+              <td class="edit-column">${
+                isCompleted ? "مكتمل" : "غير مكتمل"
+              }</td>
+            `;
+            const dataCells = Array.from(row.querySelectorAll("td")).slice(
+              1,
+              -1
+            );
+            if (isImportant && importantColor)
+              dataCells.forEach((cell) => cell.classList.add(importantColor));
           });
           sortTableByStartTime(tableId);
         }
       }
 
       function updateAllTables() {
+        const tableId = "completedTable";
         const table = document
-          .getElementById("completedTable")
+          .getElementById(tableId)
           .getElementsByTagName("tbody")[0];
         const rows = table.getElementsByTagName("tr");
         for (let row of rows) {
@@ -1236,6 +851,12 @@
       }
 
       document.addEventListener("DOMContentLoaded", function () {
+        // استعادة القيم من localStorage إذا كانت موجودة
+        weekDay = localStorage.getItem("weekDay") || "السبت";
+        hijriDay = parseInt(localStorage.getItem("hijriDay")) || 5;
+        hijriMonth = parseInt(localStorage.getItem("hijriMonth")) || 8;
+        hijriYear = parseInt(localStorage.getItem("hijriYear")) || 1444;
+
         populateDateSelects();
         loadTableData("completedTable");
         updateHeaderDate();
