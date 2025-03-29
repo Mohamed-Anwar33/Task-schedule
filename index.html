@@ -13,7 +13,7 @@
       rel="stylesheet"
     />
     <style>
-      /* يبقى الـ CSS كما هو دون تغيير */
+      /* Existing CSS remains unchanged */
       html,
       body {
         height: 100%;
@@ -116,6 +116,19 @@
         white-space: nowrap;
         min-width: 50px;
       }
+      /* New styles for drag functionality */
+      .draggable {
+        cursor: move;
+      }
+      .drag-over {
+        border: 2px dashed #2c3e50;
+      }
+      .move-btn {
+        padding: 2px 6px;
+        font-size: 10px;
+        margin: 2px;
+      }
+      /* Rest of the existing styles remain unchanged */
       .important-task-dark-red {
         background-color: #ff9999 !important;
       }
@@ -232,16 +245,6 @@
         text-decoration: underline;
         text-align: center;
         margin: 20px 0;
-      }
-      .move-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-      .move-btn {
-        padding: 2px 5px;
-        font-size: 10px;
-        min-width: 30px;
       }
       @media print {
         @page {
@@ -537,7 +540,6 @@
               <th>الموقع</th>
               <th>المطلوب</th>
               <th class="edit-column">تعديل</th>
-              <th class="edit-column">ترتيب</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -591,6 +593,7 @@
         </div>
       </div>
 
+      <!-- Rest of the HTML remains unchanged -->
       <div class="introduction mt-5" style="font-size: 8px">
         <p class="text-center" style="font-size: 8px">
           <span style="display: block">ص/ ضباط خفر</span>
@@ -693,9 +696,7 @@
           <div class="section">
             <h2 class="subtitle">عن المهمة التالية</h2>
           </div>
-          <!-- <h2 class="title">الجدول الثالث - المهام المكتملة</h2> -->
           <h4 class="header fs-6">
-            <!-- بيان بالمهام المكتملة ليوم -->
             <span id="second-selected-date"></span>
             <span id="second-print-selected-date" class="print-date"></span>
           </h4>
@@ -915,7 +916,7 @@
         document.getElementById("second-print-selected-date").innerText =
           printDate;
 
-        checkFutureTasks(); // فحص المهام المستقبلية عند تحديث التاريخ
+        checkFutureTasks();
         updateAllTables();
         saveTableData("mainTable1");
         saveTableData("mainTable2");
@@ -938,7 +939,6 @@
           const taskMonthNum = hijriMonths.indexOf(taskMonthName) + 1;
           const taskYearNum = parseInt(taskYear);
 
-          // مقارنة التاريخ الحالي مع تاريخ المهمة
           if (
             taskYearNum < hijriYear ||
             (taskYearNum === hijriYear && taskMonthNum < hijriMonth) ||
@@ -948,9 +948,9 @@
           ) {
             mainTableTasks.push(task);
             tasksMoved = true;
-            return false; // حذف المهمة من المهام المستقبلية
+            return false;
           }
-          return true; // الاحتفاظ بالمهمة في المهام المستقبلية
+          return true;
         });
 
         if (tasksMoved) {
@@ -962,7 +962,7 @@
             "future_tasks",
             JSON.stringify(updatedFutureTasks)
           );
-          loadTableData("mainTable1"); // إعادة تحميل الجدول الأول لعرض المهام المنقولة
+          loadTableData("mainTable1");
         }
       }
 
@@ -983,35 +983,6 @@
         });
       }
 
-      function moveRowUp(button) {
-        const row = button.closest("tr");
-        const table = row.parentNode;
-        const rowIndex = row.rowIndex;
-        if (rowIndex > 0) {
-          table.insertBefore(row, table.rows[rowIndex - 1]);
-          updateRowNumbers(table);
-          saveTableData("mainTable1");
-        }
-      }
-
-      function moveRowDown(button) {
-        const row = button.closest("tr");
-        const table = row.parentNode;
-        const rowIndex = row.rowIndex;
-        if (rowIndex < table.rows.length - 1) {
-          table.insertBefore(row, table.rows[rowIndex + 1].nextSibling);
-          updateRowNumbers(table);
-          saveTableData("mainTable1");
-        }
-      }
-
-      function updateRowNumbers(table) {
-        const rows = table.getElementsByTagName("tr");
-        for (let i = 0; i < rows.length; i++) {
-          rows[i].cells[0].innerText = i + 1;
-        }
-      }
-
       function addNewRow(tableId) {
         const table = document
           .getElementById(tableId)
@@ -1021,77 +992,126 @@
         const dateText = `${weekDay} ${hijriDay} ${
           hijriMonths[hijriMonth - 1]
         }، ${hijriYear} هـ`;
-
-        let moveButtons = "";
         if (tableId === "mainTable1") {
-          moveButtons = `
-            <td class="edit-column">
-              <div class="move-buttons">
-                <button class="btn btn-info btn-sm move-btn" onclick="moveRowUp(this)">▲</button>
-                <button class="btn btn-info btn-sm move-btn" onclick="moveRowDown(this)">▼</button>
-              </div>
-            </td>
-          `;
+          newRow.setAttribute("draggable", "true");
+          newRow.classList.add("draggable");
+          newRow.innerHTML = `
+        <td>${rowIndex}</td>
+        <td class="date-cell">
+          <select class="hijri-select" name="week-day">${weekDays
+            .map(
+              (day) =>
+                `<option value="${day}" ${
+                  day === weekDay ? "selected" : ""
+                }>${day}</option>`
+            )
+            .join("")}</select>
+          <select class="hijri-select" name="hijri-day">${Array.from(
+            { length: 30 },
+            (_, i) => i + 1
+          )
+            .map(
+              (day) =>
+                `<option value="${day}" ${
+                  day === hijriDay ? "selected" : ""
+                }>${day}</option>`
+            )
+            .join("")}</select>
+          <select class="hijri-select" name="hijri-month">${hijriMonths
+            .map(
+              (m, i) =>
+                `<option value="${i + 1}" ${
+                  i + 1 === hijriMonth ? "selected" : ""
+                }>${m}</option>`
+            )
+            .join("")}</select>
+          <select class="hijri-select" name="hijri-year">${Array.from(
+            { length: 41 },
+            (_, i) => 1430 + i
+          )
+            .map(
+              (year) =>
+                `<option value="${year}" ${
+                  year === hijriYear ? "selected" : ""
+                }>${year}</option>`
+            )
+            .join("")}</select>
+          <span class="print-date">${dateText}</span>
+        </td>
+        <td contenteditable="true">06:00</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td class="edit-column">
+          <div class="action-buttons">
+            <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}', this)">تعديل</button>
+            <button class="btn btn-success btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">اكتمال</button>
+            <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
+            <button class="btn btn-danger btn-sm important-btn" onclick="showColorPicker(this, '${tableId}')">تحديد اللون</button>
+            <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
+            <button class="btn btn-primary btn-sm move-btn" onclick="moveRowUp(this, '${tableId}')">↑</button>
+            <button class="btn btn-primary btn-sm move-btn" onclick="moveRowDown(this, '${tableId}')">↓</button>
+          </div>
+        </td>
+      `;
+        } else {
+          newRow.innerHTML = `
+        <td class="date-cell">
+          <select class="hijri-select" name="week-day">${weekDays
+            .map(
+              (day) =>
+                `<option value="${day}" ${
+                  day === weekDay ? "selected" : ""
+                }>${day}</option>`
+            )
+            .join("")}</select>
+          <select class="hijri-select" name="hijri-day">${Array.from(
+            { length: 30 },
+            (_, i) => i + 1
+          )
+            .map(
+              (day) =>
+                `<option value="${day}" ${
+                  day === hijriDay ? "selected" : ""
+                }>${day}</option>`
+            )
+            .join("")}</select>
+          <select class="hijri-select" name="hijri-month">${hijriMonths
+            .map(
+              (m, i) =>
+                `<option value="${i + 1}" ${
+                  i + 1 === hijriMonth ? "selected" : ""
+                }>${m}</option>`
+            )
+            .join("")}</select>
+          <select class="hijri-select" name="hijri-year">${Array.from(
+            { length: 41 },
+            (_, i) => 1430 + i
+          )
+            .map(
+              (year) =>
+                `<option value="${year}" ${
+                  year === hijriYear ? "selected" : ""
+                }>${year}</option>`
+            )
+            .join("")}</select>
+          <span class="print-date">${dateText}</span>
+        </td>
+        <td contenteditable="true">06:00</td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td class="edit-column">
+          <div class="action-buttons">
+            <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}', this)">تعديل</button>
+            <button class="btn btn-success btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">اكتمال</button>
+            <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
+            <button class="btn btn-danger btn-sm important-btn" onclick="showColorPicker(this, '${tableId}')">تحديد اللون</button>
+            <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
+          </div>
+        </td>
+      `;
         }
-
-        newRow.innerHTML = `
-          ${tableId === "mainTable1" ? `<td>${rowIndex}</td>` : ""}
-          <td class="date-cell">
-            <select class="hijri-select" name="week-day">${weekDays
-              .map(
-                (day) =>
-                  `<option value="${day}" ${
-                    day === weekDay ? "selected" : ""
-                  }>${day}</option>`
-              )
-              .join("")}</select>
-            <select class="hijri-select" name="hijri-day">${Array.from(
-              { length: 30 },
-              (_, i) => i + 1
-            )
-              .map(
-                (day) =>
-                  `<option value="${day}" ${
-                    day === hijriDay ? "selected" : ""
-                  }>${day}</option>`
-              )
-              .join("")}</select>
-            <select class="hijri-select" name="hijri-month">${hijriMonths
-              .map(
-                (m, i) =>
-                  `<option value="${i + 1}" ${
-                    i + 1 === hijriMonth ? "selected" : ""
-                  }>${m}</option>`
-              )
-              .join("")}</select>
-            <select class="hijri-select" name="hijri-year">${Array.from(
-              { length: 41 },
-              (_, i) => 1430 + i
-            )
-              .map(
-                (year) =>
-                  `<option value="${year}" ${
-                    year === hijriYear ? "selected" : ""
-                  }>${year}</option>`
-              )
-              .join("")}</select>
-            <span class="print-date">${dateText}</span>
-          </td>
-          <td contenteditable="true">06:00</td>
-          <td contenteditable="true"></td>
-          <td contenteditable="true"></td>
-          <td contenteditable="true"></td>
-          <td class="edit-column">
-            <div class="action-buttons">
-              <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}', this)">تعديل</button>
-              <button class="btn btn-success btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">اكتمال</button>
-              <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
-              <button class="btn btn-danger btn-sm important-btn" onclick="showColorPicker(this, '${tableId}')">تحديد اللون</button>
-              <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
-            </div>
-          </td>
-          ${moveButtons}
-        `;
         saveTableData(tableId);
         sortTableByStartTime(tableId);
         updatePendingTasks();
@@ -1100,6 +1120,8 @@
             "completedTable_tasks",
             localStorage.getItem("mainTable1_tasks")
           );
+          setupDragAndDrop(tableId);
+          updateCompletedTable();
         }
       }
 
@@ -1117,6 +1139,7 @@
             "completedTable_tasks",
             localStorage.getItem("mainTable1_tasks")
           );
+          updateCompletedTable();
         }
       }
 
@@ -1178,6 +1201,7 @@
             "completedTable_tasks",
             localStorage.getItem("mainTable1_tasks")
           );
+          updateCompletedTable();
         }
       }
 
@@ -1200,6 +1224,7 @@
             "completedTable_tasks",
             localStorage.getItem("mainTable1_tasks")
           );
+          updateCompletedTable();
         }
       }
 
@@ -1223,6 +1248,7 @@
               "completedTable_tasks",
               localStorage.getItem("mainTable1_tasks")
             );
+            updateCompletedTable();
           }
         } else {
           cells[1 + offset].contentEditable = "true";
@@ -1245,6 +1271,8 @@
             "completedTable_tasks",
             localStorage.getItem("mainTable1_tasks")
           );
+          updateRowNumbers(tableId);
+          updateCompletedTable();
         }
       }
 
@@ -1290,7 +1318,7 @@
             cells[3 + offset].innerText,
             cells[4 + offset].innerText,
             isCompleted,
-            false, // حالة التأجيل (غير مستخدمة هنا ولكن للتوافق مع feauturetsaks.html)
+            false,
             isImportant,
             importantColor,
           ];
@@ -1317,83 +1345,138 @@
               hijriMonths[month - 1]
             }، ${year} هـ`;
             const row = table.insertRow();
-
-            let moveButtons = "";
             if (tableId === "mainTable1") {
-              moveButtons = `
-                <td class="edit-column">
-                  <div class="move-buttons">
-                    <button class="btn btn-info btn-sm move-btn" onclick="moveRowUp(this)">▲</button>
-                    <button class="btn btn-info btn-sm move-btn" onclick="moveRowDown(this)">▼</button>
-                  </div>
-                </td>
-              `;
+              row.setAttribute("draggable", "true");
+              row.classList.add("draggable");
+              row.innerHTML = `
+            <td>${index + 1}</td>
+            <td class="date-cell">
+              <select class="hijri-select" name="week-day">${weekDays
+                .map(
+                  (d) =>
+                    `<option value="${d}" ${
+                      d === weekDay ? "selected" : ""
+                    }>${d}</option>`
+                )
+                .join("")}</select>
+              <select class="hijri-select" name="hijri-day">${Array.from(
+                { length: 30 },
+                (_, i) => i + 1
+              )
+                .map(
+                  (d) =>
+                    `<option value="${d}" ${
+                      d === parseInt(day) ? "selected" : ""
+                    }>${d}</option>`
+                )
+                .join("")}</select>
+              <select class="hijri-select" name="hijri-month">${hijriMonths
+                .map(
+                  (m, i) =>
+                    `<option value="${i + 1}" ${
+                      i + 1 === parseInt(month) ? "selected" : ""
+                    }>${m}</option>`
+                )
+                .join("")}</select>
+              <select class="hijri-select" name="hijri-year">${Array.from(
+                { length: 41 },
+                (_, i) => 1430 + i
+              )
+                .map(
+                  (y) =>
+                    `<option value="${y}" ${
+                      y === parseInt(year) ? "selected" : ""
+                    }>${y}</option>`
+                )
+                .join("")}</select>
+              <span class="print-date">${dateText}</span>
+            </td>
+            <td contenteditable="false">${rowData[1]}</td>
+            <td contenteditable="false">${rowData[2]}</td>
+            <td contenteditable="false">${rowData[3]}</td>
+            <td contenteditable="false">${rowData[4]}</td>
+            <td class="edit-column">
+              <div class="action-buttons">
+                <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}', this)">تعديل</button>
+                <button class="btn ${
+                  isCompleted ? "btn-warning" : "btn-success"
+                } btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">${
+                isCompleted ? "إلغاء الاكتمال" : "اكتمال"
+              }</button>
+                <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
+                <button class="btn btn-danger btn-sm important-btn" onclick="showColorPicker(this, '${tableId}')">${
+                isImportant ? "إلغاء الأهمية" : "تحديد اللون"
+              }</button>
+                <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
+                <button class="btn btn-primary btn-sm move-btn" onclick="moveRowUp(this, '${tableId}')">↑</button>
+                <button class="btn btn-primary btn-sm move-btn" onclick="moveRowDown(this, '${tableId}')">↓</button>
+              </div>
+            </td>
+          `;
+            } else {
+              row.innerHTML = `
+            <td class="date-cell">
+              <select class="hijri-select" name="week-day">${weekDays
+                .map(
+                  (d) =>
+                    `<option value="${d}" ${
+                      d === weekDay ? "selected" : ""
+                    }>${d}</option>`
+                )
+                .join("")}</select>
+              <select class="hijri-select" name="hijri-day">${Array.from(
+                { length: 30 },
+                (_, i) => i + 1
+              )
+                .map(
+                  (d) =>
+                    `<option value="${d}" ${
+                      d === parseInt(day) ? "selected" : ""
+                    }>${d}</option>`
+                )
+                .join("")}</select>
+              <select class="hijri-select" name="hijri-month">${hijriMonths
+                .map(
+                  (m, i) =>
+                    `<option value="${i + 1}" ${
+                      i + 1 === parseInt(month) ? "selected" : ""
+                    }>${m}</option>`
+                )
+                .join("")}</select>
+              <select class="hijri-select" name="hijri-year">${Array.from(
+                { length: 41 },
+                (_, i) => 1430 + i
+              )
+                .map(
+                  (y) =>
+                    `<option value="${y}" ${
+                      y === parseInt(year) ? "selected" : ""
+                    }>${y}</option>`
+                )
+                .join("")}</select>
+              <span class="print-date">${dateText}</span>
+            </td>
+            <td contenteditable="false">${rowData[1]}</td>
+            <td contenteditable="false">${rowData[2]}</td>
+            <td contenteditable="false">${rowData[3]}</td>
+            <td contenteditable="false">${rowData[4]}</td>
+            <td class="edit-column">
+              <div class="action-buttons">
+                <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}', this)">تعديل</button>
+                <button class="btn ${
+                  isCompleted ? "btn-warning" : "btn-success"
+                } btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">${
+                isCompleted ? "إلغاء الاكتمال" : "اكتمال"
+              }</button>
+                <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
+                <button class="btn btn-danger btn-sm important-btn" onclick="showColorPicker(this, '${tableId}')">${
+                isImportant ? "إلغاء الأهمية" : "تحديد اللون"
+              }</button>
+                <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
+              </div>
+            </td>
+          `;
             }
-
-            row.innerHTML = `
-              ${tableId === "mainTable1" ? `<td>${index + 1}</td>` : ""}
-              <td class="date-cell">
-                <select class="hijri-select" name="week-day">${weekDays
-                  .map(
-                    (d) =>
-                      `<option value="${d}" ${
-                        d === weekDay ? "selected" : ""
-                      }>${d}</option>`
-                  )
-                  .join("")}</select>
-                <select class="hijri-select" name="hijri-day">${Array.from(
-                  { length: 30 },
-                  (_, i) => i + 1
-                )
-                  .map(
-                    (d) =>
-                      `<option value="${d}" ${
-                        d === parseInt(day) ? "selected" : ""
-                      }>${d}</option>`
-                  )
-                  .join("")}</select>
-                <select class="hijri-select" name="hijri-month">${hijriMonths
-                  .map(
-                    (m, i) =>
-                      `<option value="${i + 1}" ${
-                        i + 1 === parseInt(month) ? "selected" : ""
-                      }>${m}</option>`
-                  )
-                  .join("")}</select>
-                <select class="hijri-select" name="hijri-year">${Array.from(
-                  { length: 41 },
-                  (_, i) => 1430 + i
-                )
-                  .map(
-                    (y) =>
-                      `<option value="${y}" ${
-                        y === parseInt(year) ? "selected" : ""
-                      }>${y}</option>`
-                  )
-                  .join("")}</select>
-                <span class="print-date">${dateText}</span>
-              </td>
-              <td contenteditable="false">${rowData[1]}</td>
-              <td contenteditable="false">${rowData[2]}</td>
-              <td contenteditable="false">${rowData[3]}</td>
-              <td contenteditable="false">${rowData[4]}</td>
-              <td class="edit-column">
-                <div class="action-buttons">
-                  <button class="btn btn-warning btn-sm edit-btn" onclick="editTable('${tableId}', this)">تعديل</button>
-                  <button class="btn ${
-                    isCompleted ? "btn-warning" : "btn-success"
-                  } btn-sm complete-btn" onclick="toggleComplete(this, '${tableId}')">${
-              isCompleted ? "إلغاء الاكتمال" : "اكتمال"
-            }</button>
-                  <button class="btn btn-danger btn-sm delete-btn" onclick="deleteTask(this, '${tableId}')">حذف</button>
-                  <button class="btn btn-danger btn-sm important-btn" onclick="showColorPicker(this, '${tableId}')">${
-              isImportant ? "إلغاء الأهمية" : "تحديد اللون"
-            }</button>
-                  <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
-                </div>
-              </td>
-              ${moveButtons}
-            `;
             const startIndex = tableId === "mainTable1" ? 1 : 0;
             const dataCells = Array.from(row.querySelectorAll("td")).slice(
               startIndex,
@@ -1403,7 +1486,107 @@
               dataCells.forEach((cell) => cell.classList.add(importantColor));
           });
           sortTableByStartTime(tableId);
+          if (tableId === "mainTable1") {
+            setupDragAndDrop(tableId);
+            updateCompletedTable();
+          }
         }
+      }
+
+      function updateCompletedTable() {
+        const thirdTable = document.querySelector("#completedTable tbody");
+        const firstTable = document.querySelector("#mainTable1 tbody");
+        thirdTable.innerHTML = firstTable.innerHTML;
+        const rows = thirdTable.getElementsByTagName("tr");
+        Array.from(rows).forEach((row, index) => {
+          row.cells[0].innerText = index + 1;
+          const editColumn = row.cells[row.cells.length - 1];
+          const isCompleted =
+            editColumn.querySelector(".complete-btn")?.innerText ===
+            "إلغاء الاكتمال";
+          editColumn.innerHTML = isCompleted ? "مكتمل" : "غير مكتمل";
+        });
+      }
+
+      function updateRowNumbers(tableId) {
+        if (tableId !== "mainTable1") return;
+        const table = document
+          .getElementById(tableId)
+          .getElementsByTagName("tbody")[0];
+        const rows = table.getElementsByTagName("tr");
+        Array.from(rows).forEach((row, index) => {
+          row.cells[0].innerText = index + 1;
+        });
+        updateCompletedTable();
+      }
+
+      function moveRowUp(button, tableId) {
+        if (tableId !== "mainTable1") return;
+        const row = button.closest("tr");
+        const tbody = row.parentElement;
+        const previousRow = row.previousElementSibling;
+        if (previousRow) {
+          tbody.insertBefore(row, previousRow);
+          updateRowNumbers(tableId);
+          saveTableData(tableId);
+          updateCompletedTable();
+        }
+      }
+
+      function moveRowDown(button, tableId) {
+        if (tableId !== "mainTable1") return;
+        const row = button.closest("tr");
+        const tbody = row.parentElement;
+        const nextRow = row.nextElementSibling;
+        if (nextRow) {
+          tbody.insertBefore(nextRow, row);
+          updateRowNumbers(tableId);
+          saveTableData(tableId);
+          updateCompletedTable();
+        }
+      }
+
+      function setupDragAndDrop(tableId) {
+        if (tableId !== "mainTable1") return;
+        const table = document
+          .getElementById(tableId)
+          .getElementsByTagName("tbody")[0];
+        const rows = table.getElementsByTagName("tr");
+
+        Array.from(rows).forEach((row) => {
+          row.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text/plain", row.rowIndex);
+            row.classList.add("drag-over");
+          });
+
+          row.addEventListener("dragend", () => {
+            row.classList.remove("drag-over");
+          });
+
+          row.addEventListener("dragover", (e) => {
+            e.preventDefault();
+          });
+
+          row.addEventListener("drop", (e) => {
+            e.preventDefault();
+            const draggedIndex = parseInt(e.dataTransfer.getData("text/plain"));
+            const targetRow = e.target.closest("tr");
+            if (targetRow && draggedIndex !== targetRow.rowIndex) {
+              const draggedRow = rows[draggedIndex];
+              if (draggedIndex < targetRow.rowIndex) {
+                targetRow.parentNode.insertBefore(
+                  draggedRow,
+                  targetRow.nextSibling
+                );
+              } else {
+                targetRow.parentNode.insertBefore(draggedRow, targetRow);
+              }
+              updateRowNumbers(tableId);
+              saveTableData(tableId);
+              updateCompletedTable();
+            }
+          });
+        });
       }
 
       function updateAllTables() {
@@ -1419,46 +1602,46 @@
               hijriMonths[hijriMonth - 1]
             }، ${hijriYear} هـ`;
             dateCell.innerHTML = `
-              <select class="hijri-select" name="week-day">${weekDays
-                .map(
-                  (day) =>
-                    `<option value="${day}" ${
-                      day === weekDay ? "selected" : ""
-                    }>${day}</option>`
-                )
-                .join("")}</select>
-              <select class="hijri-select" name="hijri-day">${Array.from(
-                { length: 30 },
-                (_, i) => i + 1
-              )
-                .map(
-                  (day) =>
-                    `<option value="${day}" ${
-                      day === hijriDay ? "selected" : ""
-                    }>${day}</option>`
-                )
-                .join("")}</select>
-              <select class="hijri-select" name="hijri-month">${hijriMonths
-                .map(
-                  (m, i) =>
-                    `<option value="${i + 1}" ${
-                      i + 1 === hijriMonth ? "selected" : ""
-                    }>${m}</option>`
-                )
-                .join("")}</select>
-              <select class="hijri-select" name="hijri-year">${Array.from(
-                { length: 41 },
-                (_, i) => 1430 + i
-              )
-                .map(
-                  (year) =>
-                    `<option value="${year}" ${
-                      year === hijriYear ? "selected" : ""
-                    }>${year}</option>`
-                )
-                .join("")}</select>
-              <span class="print-date">${dateText}</span>
-            `;
+          <select class="hijri-select" name="week-day">${weekDays
+            .map(
+              (day) =>
+                `<option value="${day}" ${
+                  day === weekDay ? "selected" : ""
+                }>${day}</option>`
+            )
+            .join("")}</select>
+          <select class="hijri-select" name="hijri-day">${Array.from(
+            { length: 30 },
+            (_, i) => i + 1
+          )
+            .map(
+              (day) =>
+                `<option value="${day}" ${
+                  day === hijriDay ? "selected" : ""
+                }>${day}</option>`
+            )
+            .join("")}</select>
+          <select class="hijri-select" name="hijri-month">${hijriMonths
+            .map(
+              (m, i) =>
+                `<option value="${i + 1}" ${
+                  i + 1 === hijriMonth ? "selected" : ""
+                }>${m}</option>`
+            )
+            .join("")}</select>
+          <select class="hijri-select" name="hijri-year">${Array.from(
+            { length: 41 },
+            (_, i) => 1430 + i
+          )
+            .map(
+              (year) =>
+                `<option value="${year}" ${
+                  year === hijriYear ? "selected" : ""
+                }>${year}</option>`
+            )
+            .join("")}</select>
+          <span class="print-date">${dateText}</span>
+        `;
           }
         });
       }
@@ -1520,7 +1703,7 @@
         hijriYear = parseInt(localStorage.getItem("hijriYear")) || 1444;
 
         populateDateSelects();
-        checkFutureTasks(); // فحص المهام المستقبلية عند تحميل الصفحة
+        checkFutureTasks();
         loadTableData("mainTable1");
         loadTableData("mainTable2");
         updateHeaderDate();
