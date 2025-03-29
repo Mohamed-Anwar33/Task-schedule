@@ -146,6 +146,15 @@
       .important-task-deep-purple {
         background-color: #ba68c8 !important;
       }
+      .important-task-light-orange {
+        background-color: #ffd580 !important;
+      }
+      .important-task-light-gray {
+        background-color: #f0f0f0 !important;
+      }
+      .important-task-light-green {
+        background-color: #00ff00 !important;
+      }
       .color-picker {
         margin-top: 5px;
       }
@@ -338,6 +347,15 @@
         .important-task-deep-purple {
           background-color: #ba68c8 !important;
         }
+        .important-task-light-orange {
+          background-color: #ffd580 !important;
+        }
+        .important-task-light-gray {
+          background-color: #f0f0f0 !important;
+        }
+        .important-task-light-green {
+          background-color: #00ff00 !important;
+        }
         #secondPageContent {
           display: block !important;
           page-break-before: always;
@@ -372,6 +390,12 @@
         }
         .table td:nth-child(7),
         .table th:nth-child(7) {
+          display: none !important;
+        }
+      }
+      @media print {
+        #second-selected-date,
+        #second-print-selected-date {
           display: none !important;
         }
       }
@@ -647,20 +671,20 @@
             <p class="title">تبليغ مباشرة مهمة</p>
             <p>قائد السريا - للمتابعة</p>
             <p>ضابط الميدان - للمتابعة</p>
-            <p>ضابط خطر - للمتابعة</p>
+            <p>ضابط خفر - للمتابعة</p>
             <p>رقيب السرية - فيما يخصكم</p>
             <p>رقيب فصل (ق) - فيما يخصكم</p>
-            <p>رقيب مجموعة (٧) - فيما يخصكم</p>
+            <p>رقيب مجموعة (د٧) - فيما يخصكم</p>
             <p>رئيس العمليات</p>
             <p>رقيب الحركة والآليات</p>
           </div>
           <p class="greeting">السلام عليكم ورحمة الله وبركاته</p>
-          <!-- <div class="section">
+          <div class="section">
             <h2 class="subtitle">عن المهمة التالية</h2>
-          </div> -->
-          <h2 class="title">الجدول الثالث - المهام المكتملة</h2>
+          </div>
+          <!-- <h2 class="title">الجدول الثالث - المهام المكتملة</h2> -->
           <h4 class="header fs-6">
-            بيان بالمهام المكتملة ليوم
+            <!-- بيان بالمهام المكتملة ليوم -->
             <span id="second-selected-date"></span>
             <span id="second-print-selected-date" class="print-date"></span>
           </h4>
@@ -757,6 +781,9 @@
         "important-task-deep-green",
         "important-task-deep-orange",
         "important-task-deep-purple",
+        "important-task-light-orange",
+        "important-task-light-gray",
+        "important-task-light-green",
       ];
 
       function populateDateSelects() {
@@ -1058,6 +1085,9 @@
           "أخضر غامق",
           "برتقالي غامق",
           "بنفسجي غامق",
+          "برتقالي فاتح",
+          "رمادي فاتح",
+          "أخضر فاتح",
         ];
         const colorPicker = document.createElement("div");
         colorPicker.className = "color-picker";
