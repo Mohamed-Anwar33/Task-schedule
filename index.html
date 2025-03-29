@@ -233,6 +233,16 @@
         text-align: center;
         margin: 20px 0;
       }
+      .move-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .move-btn {
+        padding: 2px 5px;
+        font-size: 10px;
+        min-width: 30px;
+      }
       @media print {
         @page {
           size: A4;
@@ -527,6 +537,7 @@
               <th>الموقع</th>
               <th>المطلوب</th>
               <th class="edit-column">تعديل</th>
+              <th class="edit-column">ترتيب</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -972,6 +983,35 @@
         });
       }
 
+      function moveRowUp(button) {
+        const row = button.closest("tr");
+        const table = row.parentNode;
+        const rowIndex = row.rowIndex;
+        if (rowIndex > 0) {
+          table.insertBefore(row, table.rows[rowIndex - 1]);
+          updateRowNumbers(table);
+          saveTableData("mainTable1");
+        }
+      }
+
+      function moveRowDown(button) {
+        const row = button.closest("tr");
+        const table = row.parentNode;
+        const rowIndex = row.rowIndex;
+        if (rowIndex < table.rows.length - 1) {
+          table.insertBefore(row, table.rows[rowIndex + 1].nextSibling);
+          updateRowNumbers(table);
+          saveTableData("mainTable1");
+        }
+      }
+
+      function updateRowNumbers(table) {
+        const rows = table.getElementsByTagName("tr");
+        for (let i = 0; i < rows.length; i++) {
+          rows[i].cells[0].innerText = i + 1;
+        }
+      }
+
       function addNewRow(tableId) {
         const table = document
           .getElementById(tableId)
@@ -981,6 +1021,19 @@
         const dateText = `${weekDay} ${hijriDay} ${
           hijriMonths[hijriMonth - 1]
         }، ${hijriYear} هـ`;
+
+        let moveButtons = "";
+        if (tableId === "mainTable1") {
+          moveButtons = `
+            <td class="edit-column">
+              <div class="move-buttons">
+                <button class="btn btn-info btn-sm move-btn" onclick="moveRowUp(this)">▲</button>
+                <button class="btn btn-info btn-sm move-btn" onclick="moveRowDown(this)">▼</button>
+              </div>
+            </td>
+          `;
+        }
+
         newRow.innerHTML = `
           ${tableId === "mainTable1" ? `<td>${rowIndex}</td>` : ""}
           <td class="date-cell">
@@ -1037,6 +1090,7 @@
               <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
             </div>
           </td>
+          ${moveButtons}
         `;
         saveTableData(tableId);
         sortTableByStartTime(tableId);
@@ -1263,6 +1317,19 @@
               hijriMonths[month - 1]
             }، ${year} هـ`;
             const row = table.insertRow();
+
+            let moveButtons = "";
+            if (tableId === "mainTable1") {
+              moveButtons = `
+                <td class="edit-column">
+                  <div class="move-buttons">
+                    <button class="btn btn-info btn-sm move-btn" onclick="moveRowUp(this)">▲</button>
+                    <button class="btn btn-info btn-sm move-btn" onclick="moveRowDown(this)">▼</button>
+                  </div>
+                </td>
+              `;
+            }
+
             row.innerHTML = `
               ${tableId === "mainTable1" ? `<td>${index + 1}</td>` : ""}
               <td class="date-cell">
@@ -1325,6 +1392,7 @@
                   <button class="btn btn-secondary btn-sm remove-color-btn" onclick="removeColor(this, '${tableId}')">إزالة اللون</button>
                 </div>
               </td>
+              ${moveButtons}
             `;
             const startIndex = tableId === "mainTable1" ? 1 : 0;
             const dataCells = Array.from(row.querySelectorAll("td")).slice(
