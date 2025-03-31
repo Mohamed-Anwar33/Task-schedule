@@ -1702,6 +1702,22 @@
         hijriMonth = parseInt(localStorage.getItem("hijriMonth")) || 8;
         hijriYear = parseInt(localStorage.getItem("hijriYear")) || 1444;
 
+        // استرجاع العناوين المحفوظة من localStorage
+        const titles = [
+          "title1",
+          "title2",
+          "title3",
+          "title4",
+          "notesTitle",
+          "signatureName",
+        ];
+        titles.forEach((id) => {
+          const savedValue = localStorage.getItem(id);
+          if (savedValue) {
+            document.getElementById(id).innerHTML = savedValue;
+          }
+        });
+
         populateDateSelects();
         checkFutureTasks();
         loadTableData("mainTable1");
