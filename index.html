@@ -12,6 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
       /* Existing CSS remains unchanged */
       html,
@@ -798,6 +799,30 @@
         "important-task-light-green",
       ];
 
+      // مفتاح التشفير (يمكنك تغييره ليكون أكثر أمانًا)
+      const encryptionKey = "mySecretKey123";
+
+      // دالة لتشفير البيانات
+      function encryptData(data) {
+        return CryptoJS.AES.encrypt(
+          JSON.stringify(data),
+          encryptionKey
+        ).toString();
+      }
+
+      // دالة لفك تشفير البيانات
+      function decryptData(encryptedData) {
+        if (!encryptedData) return null;
+        try {
+          const bytes = CryptoJS.AES.decrypt(encryptedData, encryptionKey);
+          const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+          return decryptedData ? JSON.parse(decryptedData) : null;
+        } catch (e) {
+          console.error("Error decrypting data:", e);
+          return null;
+        }
+      }
+
       function populateDateSelects() {
         const daySelects = document.querySelectorAll(
           "select[name='hijri-day']"
@@ -898,10 +923,10 @@
         hijriMonth = parseInt(document.getElementById("header-month").value);
         hijriYear = parseInt(document.getElementById("header-year").value);
 
-        localStorage.setItem("weekDay", weekDay);
-        localStorage.setItem("hijriDay", hijriDay);
-        localStorage.setItem("hijriMonth", hijriMonth);
-        localStorage.setItem("hijriYear", hijriYear);
+        localStorage.setItem("weekDay", encryptData(weekDay));
+        localStorage.setItem("hijriDay", encryptData(hijriDay));
+        localStorage.setItem("hijriMonth", encryptData(hijriMonth));
+        localStorage.setItem("hijriYear", encryptData(hijriYear));
 
         const selectedDate = `${weekDay} ${hijriDay} ${
           hijriMonths[hijriMonth - 1]
@@ -924,12 +949,10 @@
       }
 
       function checkFutureTasks() {
-        const futureTasks = JSON.parse(
-          localStorage.getItem("future_tasks") || "[]"
-        );
-        const mainTableTasks = JSON.parse(
-          localStorage.getItem("mainTable1_tasks") || "[]"
-        );
+        const futureTasks =
+          decryptData(localStorage.getItem("future_tasks")) || [];
+        const mainTableTasks =
+          decryptData(localStorage.getItem("mainTable1_tasks")) || [];
         let tasksMoved = false;
 
         const updatedFutureTasks = futureTasks.filter((task) => {
@@ -954,14 +977,8 @@
         });
 
         if (tasksMoved) {
-          localStorage.setItem(
-            "mainTable1_tasks",
-            JSON.stringify(mainTableTasks)
-          );
-          localStorage.setItem(
-            "future_tasks",
-            JSON.stringify(updatedFutureTasks)
-          );
+          localStorage.setItem("mainTable1_tasks", encryptData(mainTableTasks));
+          localStorage.setItem("future_tasks", encryptData(updatedFutureTasks));
           loadTableData("mainTable1");
         }
       }
@@ -1313,10 +1330,10 @@
           cells[0 + offset].querySelector(".print-date").innerText = dateText;
           const taskData = [
             `${weekDay} ${day} ${hijriMonths[month - 1]} ${year}`,
-            cells[1 + offset].innerText,
-            cells[2 + offset].innerText,
-            cells[3 + offset].innerText,
-            cells[4 + offset].innerText,
+            cells[1 + offset].innerText.trim(),
+            cells[2 + offset].innerText.trim(),
+            cells[3 + offset].innerText.trim(),
+            cells[4 + offset].innerText.trim(),
             isCompleted,
             false,
             isImportant,
@@ -1324,17 +1341,17 @@
           ];
           data.push(taskData);
         }
-        localStorage.setItem(tableId + "_tasks", JSON.stringify(data));
+        localStorage.setItem(tableId + "_tasks", encryptData(data));
       }
 
       function loadTableData(tableId) {
         const table = document
           .getElementById(tableId)
           .getElementsByTagName("tbody")[0];
-        const savedData = localStorage.getItem(tableId + "_tasks");
+        const savedData = decryptData(localStorage.getItem(tableId + "_tasks"));
         table.innerHTML = "";
         if (savedData) {
-          const tasks = JSON.parse(savedData);
+          const tasks = savedData;
           tasks.forEach((rowData, index) => {
             const [weekDay, day, monthName, year] = rowData[0].split(" ");
             const month = hijriMonths.indexOf(monthName) + 1;
@@ -1649,14 +1666,13 @@
       function updatePendingTasks() {
         const pendingTasks = [];
         ["mainTable1", "mainTable2"].forEach((tableId) => {
-          const tableData = JSON.parse(
-            localStorage.getItem(tableId + "_tasks") || "[]"
-          );
+          const tableData =
+            decryptData(localStorage.getItem(tableId + "_tasks")) || [];
           tableData.forEach((task) => {
             if (!task[5]) pendingTasks.push(task);
           });
         });
-        localStorage.setItem("pending_tasks", JSON.stringify(pendingTasks));
+        localStorage.setItem("pending_tasks", encryptData(pendingTasks));
       }
 
       function printTable(tableId) {
@@ -1693,14 +1709,16 @@
         button.innerText = "تعديل";
         button.className = "btn btn-warning btn-sm edit-btn";
         button.onclick = () => editText(elementId);
-        localStorage.setItem(elementId, input.value);
+        localStorage.setItem(elementId, encryptData(input.value));
       }
 
       document.addEventListener("DOMContentLoaded", () => {
-        weekDay = localStorage.getItem("weekDay") || "السبت";
-        hijriDay = parseInt(localStorage.getItem("hijriDay")) || 5;
-        hijriMonth = parseInt(localStorage.getItem("hijriMonth")) || 8;
-        hijriYear = parseInt(localStorage.getItem("hijriYear")) || 1444;
+        weekDay = decryptData(localStorage.getItem("weekDay")) || "السبت";
+        hijriDay = parseInt(decryptData(localStorage.getItem("hijriDay"))) || 5;
+        hijriMonth =
+          parseInt(decryptData(localStorage.getItem("hijriMonth"))) || 8;
+        hijriYear =
+          parseInt(decryptData(localStorage.getItem("hijriYear"))) || 1444;
 
         // استرجاع العناوين المحفوظة من localStorage
         const titles = [
@@ -1712,7 +1730,7 @@
           "signatureName",
         ];
         titles.forEach((id) => {
-          const savedValue = localStorage.getItem(id);
+          const savedValue = decryptData(localStorage.getItem(id));
           if (savedValue) {
             document.getElementById(id).innerHTML = savedValue;
           }
