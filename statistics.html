@@ -8,18 +8,16 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap"
       rel="stylesheet"
     />
+
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="container">
-      <div class="text-center mt-3">
-        <h2 class="fs-5">إحصائية المهام</h2>
-      </div>
-
+      <div class="text-center mt-3"><h2 class="fs-5">إحصائية المهام</h2></div>
       <div class="search-form mt-4">
         <h3 class="fs-6">خاصية البحث والإحصائية</h3>
         <p class="fs-6">
@@ -58,7 +56,6 @@
           </button>
         </form>
       </div>
-
       <div class="table-container mt-4">
         <table class="table table-bordered table-striped">
           <thead class="table-dark">
@@ -68,16 +65,12 @@
               <th>الموقع</th>
             </tr>
           </thead>
-          <tbody id="resultsTable">
-            <!-- سيتم إدراج النتائج هنا -->
-          </tbody>
+          <tbody id="resultsTable"></tbody>
         </table>
       </div>
-
       <button class="btn btn-primary print-btn mt-3" onclick="window.print()">
         طباعة
       </button>
-
       <div class="text-center mt-3 navigation-buttons">
         <a href="index.html" class="btn btn-secondary btn-sm"
           >الجدول الأول والثاني</a
@@ -88,8 +81,7 @@
         >
       </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    <script src="scripts.js"></script>
   </body>
 </html>
