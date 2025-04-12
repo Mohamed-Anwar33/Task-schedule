@@ -248,6 +248,11 @@ h4 {
   margin: 20px 0;
 }
 
+/* جعل جميع صفوف الجدول الثالث (completedTable) بيضاء */
+#completedTable.table-striped tbody tr {
+  background-color: #fff !important;
+}
+
 @media print {
   @page {
     size: A4;
@@ -402,6 +407,10 @@ h4 {
   #second-print-selected-date {
     display: none !important;
   }
+  /* التأكد من أن صفوف الجدول الثالث بيضاء عند الطباعة */
+  #completedTable.table-striped tbody tr {
+    background-color: #fff !important;
+  }
 }
 
 @media (max-width: 430px) {
@@ -445,5 +454,20 @@ h4 {
     padding: 3px;
     white-space: normal;
     line-height: 1.2;
+  }
+}
+/* جعل جميع صفوف الجدول الثالث بيضاء على الشاشة */
+#completedTable.table-striped tbody tr,
+#completedTable.table-striped tbody tr:nth-child(odd),
+#completedTable.table-striped tbody tr:nth-child(even) {
+  background-color: #ffffff !important;
+}
+
+/* جعل جميع صفوف الجدول الثالث بيضاء عند الطباعة */
+@media print {
+  #completedTable.table-striped tbody tr,
+  #completedTable.table-striped tbody tr:nth-child(odd),
+  #completedTable.table-striped tbody tr:nth-child(even) {
+    background-color: #ffffff !important;
   }
 }
